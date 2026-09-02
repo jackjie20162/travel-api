@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"context"
+	"errors"
 	"net/http"
 	"strconv"
 
@@ -29,7 +31,7 @@ func (h *ProductHandler) List(w http.ResponseWriter, r *http.Request) {
 
 func (h *ProductHandler) Detail(w http.ResponseWriter, r *http.Request) {
 	id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
-	if err != nil || id <= 0 { httpx.Error(w, err); return }
+	if err != nil || id <= 0 { httpx.Error(w, errors.New("invalid product id")); return }
 	ctx, err := rpcContext(r)
 	if err != nil { httpx.Error(w, err); return }
 	p, err := h.svcCtx.CatalogClient.GetProduct(ctx, &travel.ProductIdRequest{Id:id})
