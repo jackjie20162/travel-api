@@ -28,6 +28,11 @@ Web / H5 / App / external adapters
 - `travel-api` owns RPC client construction through `internal/svc/servicecontext.go`.
 - `travel-rpc` owns tourism domain rules, inventory, reservations, orders and persistence.
 - Tenant/merchant/customer identity is treated as request context; Travel does not depend on another service's internal implementation.
+- Product list/detail REST endpoints are wired to `CatalogService`.
+- Inventory check REST endpoint is wired to `InventoryService.Check`.
+- Order creation REST endpoint is wired to `OrderService.Create`.
+- Order query REST endpoint `GET /api/travel/orders/:orderNo` is now registered and wired to `OrderService.Get`.
+- Optional `X-Customer-ID` is propagated to `CreateOrderRequest.CustomerId` when present.
 
 ### Context boundary
 
@@ -46,7 +51,7 @@ Other systems may integrate with Travel later through its stable REST API, but T
 ### Verification status
 
 - RPC protobuf/Ent generation has previously been verified in CI; the latest type-compatibility fixes are awaiting a new workflow result.
-- Travel API wiring is present, but API build/test verification remains a separate milestone.
+- Travel API source wiring has been extended, but a fresh API generation/build/test workflow result is still required.
 
 ### Next
 
