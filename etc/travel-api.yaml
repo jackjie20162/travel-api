@@ -2,3 +2,5 @@ Name: travel-api
 Host: 0.0.0.0
 Port: 9200
 Timeout: 10000
+TravelRpc:
+  Target: 127.0.0.1:9201
