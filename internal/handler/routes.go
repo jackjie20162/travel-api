@@ -16,10 +16,10 @@ func RegisterHandlers(server *rest.Server, ctx *svc.ServiceContext) {
         {Method:http.MethodPost,Path:"/api/travel/orders",Handler:orders.Create},
         {Method:http.MethodGet,Path:"/api/travel/orders/:orderNo",Handler:orders.Get},
         {Method:http.MethodPost,Path:"/api/travel/payments",Handler:payments.Create},
-        {Method:http.MethodGet,Path:"/api/travel/payments/:paymentNo",Handler:payments.Get},
         {Method:http.MethodGet,Path:"/api/travel/payments/paypal/return",Handler:payments.Return},
         {Method:http.MethodGet,Path:"/api/travel/payments/paypal/cancel",Handler:payments.Cancel},
         {Method:http.MethodPost,Path:"/api/travel/payments/paypal/webhook",Handler:payments.PayPalWebhook},
+        {Method:http.MethodGet,Path:"/api/travel/payments/:paymentNo",Handler:payments.Get},
     })
 }
 
