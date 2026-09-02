@@ -3,7 +3,7 @@ syntax = "v1"
 info(
     title: "Global Dubai Travel API"
     desc: "Product, inventory, order and payment gateway APIs"
-    version: "0.1.0"
+    version: "0.1.1"
 )
 
 type ProductListReq {
@@ -12,7 +12,6 @@ type ProductListReq {
     Page int `form:"page,optional"`
     PageSize int `form:"pageSize,optional"`
 }
-
 type Product {
     Id int64 `json:"id"`
     TenantId int64 `json:"tenantId"`
@@ -26,12 +25,7 @@ type Product {
     MinPrice int64 `json:"minPrice"`
     Status string `json:"status"`
 }
-
-type ProductListResp {
-    Items []Product `json:"items"`
-    Total int64 `json:"total"`
-}
-
+type ProductListResp { Items []Product `json:"items"`; Total int64 `json:"total"` }
 get /api/travel/products (ProductListReq) returns (ProductListResp)
 get /api/travel/products/:id returns (Product)
 
@@ -41,29 +35,18 @@ type InventoryCheckReq {
     TimeSlot string `json:"timeSlot,optional"`
     Quantity int `json:"quantity"`
 }
-
-type InventoryCheckResp {
-    Available bool `json:"available"`
-    Remaining int `json:"remaining"`
-    UnitPrice int64 `json:"unitPrice"`
-    Currency string `json:"currency"`
-}
-
+type InventoryCheckResp { Available bool `json:"available"`; Remaining int `json:"remaining"`; UnitPrice int64 `json:"unitPrice"`; Currency string `json:"currency"` }
 post /api/travel/inventory/check (InventoryCheckReq) returns (InventoryCheckResp)
 
 type CreateOrderReq {
-    TenantId int64 `json:"tenantId"`
-    MerchantId int64 `json:"merchantId"`
     ProductId int64 `json:"productId"`
     PackageId int64 `json:"packageId"`
     Date string `json:"date"`
     TimeSlot string `json:"timeSlot,optional"`
     Quantity int `json:"quantity"`
-    Currency string `json:"currency"`
-    TotalAmount int64 `json:"totalAmount"`
-    CustomerEmail string `json:"customerEmail"`
+    CustomerEmail string `json:"customerEmail,optional"`
+    ReservationKey string `json:"reservationKey,optional"`
 }
-
 type CreateOrderResp {
     Id int64 `json:"id"`
     OrderNo string `json:"orderNo"`
@@ -71,6 +54,5 @@ type CreateOrderResp {
     TotalAmount int64 `json:"totalAmount"`
     Currency string `json:"currency"`
 }
-
 post /api/travel/orders (CreateOrderReq) returns (CreateOrderResp)
 get /api/travel/orders/:orderNo returns (CreateOrderResp)
