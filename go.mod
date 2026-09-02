@@ -8,4 +8,6 @@ require (
 )
 
 replace github.com/zeromicro/go-zero v1.10.3 => github.com/suyuan32/simple-admin-tools v1.10.3
-replace gitee.com/meinongyihe/travel-rpc => ../travel-app
+
+// Local development override. CI checks out ../travel-rpc before building.
+replace gitee.com/meinongyihe/travel-rpc => ../travel-rpc
