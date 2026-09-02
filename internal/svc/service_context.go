@@ -13,6 +13,7 @@ type ServiceContext struct {
     InventoryClient travel.InventoryServiceClient
     OrderClient     travel.OrderServiceClient
     PaymentClient   travel.PaymentServiceClient
+    ManagementClient travel.TravelManagementServiceClient
     PayPal          *paypal.Provider
 }
 
@@ -23,6 +24,7 @@ func NewServiceContext(c config.Config, conn grpc.ClientConnInterface) *ServiceC
         InventoryClient: travel.NewInventoryServiceClient(conn),
         OrderClient: travel.NewOrderServiceClient(conn),
         PaymentClient: travel.NewPaymentServiceClient(conn),
+        ManagementClient: travel.NewTravelManagementServiceClient(conn),
         PayPal: paypal.New(paypal.Config{Enabled:c.Payment.PayPal.Enabled,BaseURL:c.Payment.PayPal.BaseURL,ClientID:c.Payment.PayPal.ClientID,Secret:c.Payment.PayPal.Secret,WebhookID:c.Payment.PayPal.WebhookID,ReturnURL:c.Payment.PayPal.ReturnURL,CancelURL:c.Payment.PayPal.CancelURL}),
     }
 }
