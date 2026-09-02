@@ -4,3 +4,13 @@ Port: 9200
 Timeout: 10000
 TravelRpc:
   Target: 127.0.0.1:9201
+Payment:
+  FrontendReturnURL: ""
+  PayPal:
+    Enabled: true
+    BaseURL: https://api-m.sandbox.paypal.com
+    ClientID: ""
+    Secret: ""
+    WebhookID: ""
+    ReturnURL: https://travel.code688.com/api/travel/payments/paypal/return
+    CancelURL: https://travel.code688.com/api/travel/payments/paypal/cancel
