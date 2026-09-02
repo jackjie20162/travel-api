@@ -3,14 +3,15 @@ syntax = "v1"
 info(
     title: "Global Dubai Travel API"
     desc: "Product, inventory, order and payment gateway APIs"
-    version: "0.1.1"
+    version: "0.1.2"
 )
 
+// Public catalog query. Tenant/merchant ownership is resolved by the backend.
 type ProductListReq {
     Keyword string `form:"keyword,optional"`
     Destination string `form:"destination,optional"`
-    Page int `form:"page,optional"`
-    PageSize int `form:"pageSize,optional"`
+    Page int `form:"page,optional" validate:"gte=1"`
+    PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"`
 }
 type Product {
     Id int64 `json:"id"`
@@ -25,27 +26,35 @@ type Product {
     MinPrice int64 `json:"minPrice"`
     Status string `json:"status"`
 }
-type ProductListResp { Items []Product `json:"items"`; Total int64 `json:"total"` }
+type ProductListResp {
+    Items []Product `json:"items"`
+    Total int64 `json:"total"`
+}
 get /api/travel/products (ProductListReq) returns (ProductListResp)
 get /api/travel/products/:id returns (Product)
 
 type InventoryCheckReq {
-    PackageId int64 `json:"packageId"`
-    Date string `json:"date"`
+    PackageId int64 `json:"packageId" validate:"gt=0"`
+    Date string `json:"date" validate:"required"`
     TimeSlot string `json:"timeSlot,optional"`
-    Quantity int `json:"quantity"`
+    Quantity int `json:"quantity" validate:"gt=0"`
 }
-type InventoryCheckResp { Available bool `json:"available"`; Remaining int `json:"remaining"`; UnitPrice int64 `json:"unitPrice"`; Currency string `json:"currency"` }
+type InventoryCheckResp {
+    Available bool `json:"available"`
+    Remaining int `json:"remaining"`
+    UnitPrice int64 `json:"unitPrice"`
+    Currency string `json:"currency"`
+}
 post /api/travel/inventory/check (InventoryCheckReq) returns (InventoryCheckResp)
 
 type CreateOrderReq {
-    ProductId int64 `json:"productId"`
-    PackageId int64 `json:"packageId"`
-    Date string `json:"date"`
+    ProductId int64 `json:"productId" validate:"gt=0"`
+    PackageId int64 `json:"packageId" validate:"gt=0"`
+    Date string `json:"date" validate:"required"`
     TimeSlot string `json:"timeSlot,optional"`
-    Quantity int `json:"quantity"`
+    Quantity int `json:"quantity" validate:"gt=0"`
     CustomerEmail string `json:"customerEmail,optional"`
-    ReservationKey string `json:"reservationKey,optional"`
+    ReservationKey string `json:"reservationKey" validate:"required"`
 }
 type CreateOrderResp {
     Id int64 `json:"id"`
