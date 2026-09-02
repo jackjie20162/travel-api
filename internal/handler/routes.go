@@ -7,11 +7,18 @@ import (
 )
 
 func RegisterHandlers(server *rest.Server, ctx *svc.ServiceContext) {
-    products:=NewProductHandler(ctx);inventory:=NewInventoryHandler(ctx);orders:=NewOrderHandler(ctx);payments:=NewPaymentHandler(ctx)
+    products:=NewProductHandler(ctx);inventory:=NewInventoryHandler(ctx);orders:=NewOrderHandler(ctx);payments:=NewPaymentHandler(ctx);management:=NewManagementHandler(ctx)
     server.AddRoutes([]rest.Route{
         {Method:http.MethodGet,Path:"/health",Handler:healthHandler},
         {Method:http.MethodGet,Path:"/api/travel/products",Handler:products.List},
         {Method:http.MethodGet,Path:"/api/travel/products/:id",Handler:products.Detail},
+        {Method:http.MethodPost,Path:"/api/travel/merchant/products",Handler:management.CreateProduct},
+        {Method:http.MethodPut,Path:"/api/travel/merchant/products/:id",Handler:management.UpdateProduct},
+        {Method:http.MethodPost,Path:"/api/travel/merchant/products/:id/publish",Handler:management.PublishProduct},
+        {Method:http.MethodPost,Path:"/api/travel/merchant/products/:id/packages",Handler:management.CreatePackage},
+        {Method:http.MethodGet,Path:"/api/travel/merchant/products/:id/packages",Handler:management.ListPackages},
+        {Method:http.MethodPost,Path:"/api/travel/merchant/packages/:id/inventory",Handler:management.UpsertInventory},
+        {Method:http.MethodGet,Path:"/api/travel/merchant/packages/:id/inventory",Handler:management.ListInventory},
         {Method:http.MethodPost,Path:"/api/travel/inventory/check",Handler:inventory.Check},
         {Method:http.MethodPost,Path:"/api/travel/orders",Handler:orders.Create},
         {Method:http.MethodGet,Path:"/api/travel/orders/:orderNo",Handler:orders.Get},
