@@ -3,19 +3,33 @@ syntax = "v1"
 info(
     title: "Global Dubai Travel API"
     desc: "Product, inventory, order and payment gateway APIs"
-    version: "0.2.0"
+    version: "0.3.0"
 )
 
-type ProductListReq {
-    Keyword string `form:"keyword,optional"`
-    Destination string `form:"destination,optional"`
-    Page int `form:"page,optional" validate:"gte=1"`
-    PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"`
-}
+type ProductListReq { Keyword string `form:"keyword,optional"`; Destination string `form:"destination,optional"`; Page int `form:"page,optional" validate:"gte=1"`; PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"` }
 type Product { Id int64 `json:"id"`; TenantId int64 `json:"tenantId"`; MerchantId int64 `json:"merchantId"`; Code string `json:"code"`; Title string `json:"title"`; Slug string `json:"slug"`; Destination string `json:"destination"`; Description string `json:"description"`; Currency string `json:"currency"`; MinPrice int64 `json:"minPrice"`; Status string `json:"status"` }
 type ProductListResp { Items []Product `json:"items"`; Total int64 `json:"total"` }
 get /api/travel/products (ProductListReq) returns (ProductListResp)
 get /api/travel/products/:id returns (Product)
+
+type CreateProductReq { Code string `json:"code" validate:"required"`; Title string `json:"title" validate:"required"`; Slug string `json:"slug,optional"`; Destination string `json:"destination,optional"`; Description string `json:"description,optional"`; Currency string `json:"currency,optional"`; MinPrice int64 `json:"minPrice,optional" validate:"gte=0"` }
+type UpdateProductReq { Code string `json:"code" validate:"required"`; Title string `json:"title" validate:"required"`; Slug string `json:"slug,optional"`; Destination string `json:"destination,optional"`; Description string `json:"description,optional"`; Currency string `json:"currency,optional"`; MinPrice int64 `json:"minPrice,optional" validate:"gte=0"` }
+type PublishProductReq { Published bool `json:"published"` }
+post /api/travel/merchant/products (CreateProductReq) returns (Product)
+put /api/travel/merchant/products/:id (UpdateProductReq) returns (Product)
+post /api/travel/merchant/products/:id/publish (PublishProductReq) returns (Product)
+
+type PackageReq { Code string `json:"code" validate:"required"`; Name string `json:"name" validate:"required"` }
+type Package { Id int64 `json:"id"`; ProductId int64 `json:"productId"`; Code string `json:"code"`; Name string `json:"name"`; Status string `json:"status"` }
+type PackageListResp { Items []Package `json:"items"` }
+post /api/travel/merchant/products/:id/packages (PackageReq) returns (Package)
+get /api/travel/merchant/products/:id/packages returns (PackageListResp)
+
+type InventoryUpsertReq { Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Capacity int `json:"capacity" validate:"gte=0"`; UnitPrice int64 `json:"unitPrice" validate:"gte=0"`; Currency string `json:"currency,optional"`; Status string `json:"status,optional"` }
+type InventoryItem { Id int64 `json:"id"`; PackageId int64 `json:"packageId"`; Date string `json:"date"`; TimeSlot string `json:"timeSlot"`; Capacity int32 `json:"capacity"`; Reserved int32 `json:"reserved"`; UnitPrice int64 `json:"unitPrice"`; Currency string `json:"currency"`; Status string `json:"status"` }
+type InventoryListResp { Items []InventoryItem `json:"items"` }
+post /api/travel/merchant/packages/:id/inventory (InventoryUpsertReq) returns (InventoryItem)
+get /api/travel/merchant/packages/:id/inventory returns (InventoryListResp)
 
 type InventoryCheckReq { PackageId int64 `json:"packageId" validate:"gt=0"`; Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Quantity int `json:"quantity" validate:"gt=0"` }
 type InventoryCheckResp { Available bool `json:"available"`; Remaining int32 `json:"remaining"`; UnitPrice int64 `json:"unitPrice"`; Currency string `json:"currency"` }
