@@ -1,5 +1,0 @@
-fix: Traveler.Id 标记 optional 修复下单验证失败
-
-- types.go: Traveler.Id json tag 从 "id" 改为 "id,optional"
-- 创建订单时前端不传游客 id，严格模式下 httpx.Parse 校验报错 "field travelers[0].id is not set"
-- 标记 optional 后 id 为 0 时不再触发验证
