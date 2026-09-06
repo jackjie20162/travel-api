@@ -41,6 +41,7 @@ func (l *ListMyOrdersLogic) ListMyOrders(req *types.ProductListReq) (*types.Orde
 	}
 	resp, err := l.svcCtx.OrderClient.ListCustomerOrders(ctx, &travel.CustomerOrderListRequest{
 		CustomerId: customerID,
+		Status:     req.Status,
 		Page:       page,
 		PageSize:   pageSize,
 	})

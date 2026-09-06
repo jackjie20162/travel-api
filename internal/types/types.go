@@ -6,6 +6,7 @@ package types
 type ProductListReq struct {
 	Keyword     string `form:"keyword,optional"`
 	Destination string `form:"destination,optional"`
+	Status      string `form:"status,optional"`
 	// min : 1
 	Page int `form:"page,optional" validate:"gte=1"`
 	// min : 1

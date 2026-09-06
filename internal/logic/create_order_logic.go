@@ -26,7 +26,13 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (*types.Create
 	if err != nil {
 		return nil, err
 	}
-	customerID, _ := middleware.CustomerID(l.ctx)
+	// Prefer the authenticated user ID as customerID; fall back to header value
+	var customerID int64
+	if id, ok := middleware.AuthUserID(l.ctx); ok {
+		customerID = id
+	} else {
+		customerID, _ = middleware.CustomerID(l.ctx)
+	}
 
 	var travelers []*travel.Traveler
 	for _, t := range req.Travelers {

@@ -6,8 +6,10 @@ import (
 	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"gitee.com/meinongyihe/travel-api/internal/logic"
+	"gitee.com/meinongyihe/travel-api/internal/middleware"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"gitee.com/meinongyihe/travel-api/internal/types"
+	"gitee.com/meinongyihe/travel-rpc/ent/user"
 )
 
 // swagger:route post /api/travel/orders  CreateOrder
@@ -32,8 +34,16 @@ func CreateOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
-
-		l := logic.NewCreateOrderLogic(r.Context(), svcCtx)
+		// Extract Bearer token → find user → inject userID as customerID
+		ctx := r.Context()
+		token := middleware.ExtractToken(r)
+		if token != "" {
+			u, err := svcCtx.DB.User.Query().Where(user.TokenEQ(token)).Only(r.Context())
+			if err == nil {
+				ctx = middleware.WithAuthUserID(ctx, int64(u.ID))
+			}
+		}
+		l := logic.NewCreateOrderLogic(ctx, svcCtx)
 		resp, err := l.CreateOrder(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)

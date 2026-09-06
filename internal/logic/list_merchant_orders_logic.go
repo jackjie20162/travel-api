@@ -25,7 +25,7 @@ func (l *ListMerchantOrdersLogic) ListMerchantOrders(req *types.ProductListReq) 
 	if err != nil {
 		return nil, err
 	}
-	status := "" // could be extracted from query params if needed
+	status := req.Status
 	page := int32(req.Page)
 	pageSize := int32(req.PageSize)
 	if page <= 0 {
