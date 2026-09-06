@@ -27,18 +27,19 @@ import (
 
 func AcceptOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := logic.SetPathParams(r.Context(), r)
 		var req types.AcceptOrderReq
 		if err := httpx.Parse(r, &req, true); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 			return
 		}
 
-		l := logic.NewAcceptOrderLogic(r.Context(), svcCtx)
+		l := logic.NewAcceptOrderLogic(ctx, svcCtx)
 		resp, err := l.AcceptOrder(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			httpx.OkJsonCtx(ctx, w, resp)
 		}
 	}
 }
