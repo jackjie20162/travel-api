@@ -34,14 +34,23 @@ func (l *PayPalReturnLogic) PayPalReturn(r *http.Request) (*types.PaymentResp, e
 		return nil, err
 	}
 	ctx := paymentContext(l.ctx, tenantID, merchantID)
-	// Get payment to find PayPal order ID
+	// Get payment to check current status
 	p, err := l.svcCtx.PaymentClient.Get(ctx, &travel.PaymentNoRequest{PaymentNo: paymentNo})
 	if err != nil {
 		return nil, err
 	}
+	// If already paid (e.g. webhook already processed), return directly
+	if p.Status == "PAID" {
+		return toPaymentResp(p), nil
+	}
 	// Capture PayPal order
 	capture, err := l.svcCtx.PayPal.CaptureOrder(l.ctx, p.ProviderPaymentId)
 	if err != nil {
+		// If capture fails because it's already captured, check payment status again
+		p2, getErr := l.svcCtx.PaymentClient.Get(ctx, &travel.PaymentNoRequest{PaymentNo: paymentNo})
+		if getErr == nil && p2.Status == "PAID" {
+			return toPaymentResp(p2), nil
+		}
 		return nil, err
 	}
 	// Mark payment as paid
@@ -50,6 +59,11 @@ func (l *PayPalReturnLogic) PayPalReturn(r *http.Request) (*types.PaymentResp, e
 		ProviderPaymentId: capture.CaptureID,
 	})
 	if err != nil {
+		// If MarkPaid fails, check if it was already marked paid by webhook
+		p2, getErr := l.svcCtx.PaymentClient.Get(ctx, &travel.PaymentNoRequest{PaymentNo: paymentNo})
+		if getErr == nil && p2.Status == "PAID" {
+			return toPaymentResp(p2), nil
+		}
 		return nil, err
 	}
 	out := toPaymentResp(paid)

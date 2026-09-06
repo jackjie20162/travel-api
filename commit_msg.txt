@@ -1,0 +1,6 @@
+fix: PayPal return 回调与 webhook 竞态导致 payment conflict
+
+- PayPal return handler 增加幂等处理：
+  - 若支付已为 PAID 状态（webhook 已处理），直接返回成功
+  - CaptureOrder 失败时二次检查支付状态
+  - MarkPaid 失败时二次检查是否已被 webhook 标记为 PAID
