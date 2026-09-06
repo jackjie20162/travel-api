@@ -2,28 +2,41 @@ package main
 
 import (
 	"flag"
+	"fmt"
+	"net/http"
 
 	"gitee.com/meinongyihe/travel-api/internal/config"
 	"gitee.com/meinongyihe/travel-api/internal/handler"
+	"gitee.com/meinongyihe/travel-api/internal/middleware"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"github.com/zeromicro/go-zero/core/conf"
 	"github.com/zeromicro/go-zero/rest"
-	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 var configFile = flag.String("f", "etc/travel-api.yaml", "the config file")
 
 func main() {
 	flag.Parse()
+
 	var c config.Config
-	conf.MustLoad(*configFile, &c)
-	conn, err := grpc.NewClient(c.TravelRpc.Target, grpc.WithTransportCredentials(insecure.NewCredentials()))
-	if err != nil { panic(err) }
-	defer conn.Close()
-	ctx := svc.NewServiceContext(c, conn)
+	conf.MustLoad(*configFile, &c, conf.UseEnv())
+
 	server := rest.MustNewServer(c.RestConf)
 	defer server.Stop()
+
+	// Global middleware: inject tenant/merchant from HTTP headers into context
+	server.Use(func(next http.HandlerFunc) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			ctx := middleware.ContextFromRequest(r)
+			r = r.WithContext(ctx)
+			next(w, r)
+		}
+	})
+
+	ctx := svc.NewServiceContext(c)
+	defer ctx.DB.Close()
 	handler.RegisterHandlers(server, ctx)
+
+	fmt.Printf("Starting travel-api at %s:%d...\n", c.Host, c.Port)
 	server.Start()
 }

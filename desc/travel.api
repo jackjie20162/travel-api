@@ -1,46 +1,152 @@
-syntax = "v1"
-
 info(
-    title: "Global Dubai Travel API"
-    desc: "Product, inventory, order and payment gateway APIs"
-    version: "0.3.0"
+	title: "Global Dubai Travel API"
+	desc: "Product, inventory, order and payment gateway APIs"
+	version: "0.5.0"
 )
 
+// ── Types ─
 type ProductListReq { Keyword string `form:"keyword,optional"`; Destination string `form:"destination,optional"`; Page int `form:"page,optional" validate:"gte=1"`; PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"` }
-type Product { Id int64 `json:"id"`; TenantId int64 `json:"tenantId"`; MerchantId int64 `json:"merchantId"`; Code string `json:"code"`; Title string `json:"title"`; Slug string `json:"slug"`; Destination string `json:"destination"`; Description string `json:"description"`; Currency string `json:"currency"`; MinPrice int64 `json:"minPrice"`; Status string `json:"status"` }
+type Product { Id int64 `json:"id"`; TenantId int64 `json:"tenantId"`; MerchantId int64 `json:"merchantId"`; Code string `json:"code"`; Title string `json:"title"`; Slug string `json:"slug"`; Destination string `json:"destination"`; Description string `json:"description"`; Currency string `json:"currency"`; MinPrice int64 `json:"minPrice"`; Status string `json:"status"`; Highlights string `json:"highlights"`; CoverImage string `json:"coverImage"`; Images string `json:"images"`; VideoUrl string `json:"videoUrl"`; RichContent string `json:"richContent"`; BookingNotice string `json:"bookingNotice"` }
 type ProductListResp { Items []Product `json:"items"`; Total int64 `json:"total"` }
-get /api/travel/products (ProductListReq) returns (ProductListResp)
-get /api/travel/products/:id returns (Product)
 
-type CreateProductReq { Code string `json:"code" validate:"required"`; Title string `json:"title" validate:"required"`; Slug string `json:"slug,optional"`; Destination string `json:"destination,optional"`; Description string `json:"description,optional"`; Currency string `json:"currency,optional"`; MinPrice int64 `json:"minPrice,optional" validate:"gte=0"` }
-type UpdateProductReq { Code string `json:"code" validate:"required"`; Title string `json:"title" validate:"required"`; Slug string `json:"slug,optional"`; Destination string `json:"destination,optional"`; Description string `json:"description,optional"`; Currency string `json:"currency,optional"`; MinPrice int64 `json:"minPrice,optional" validate:"gte=0"` }
+type CreateProductReq { Code string `json:"code" validate:"required"`; Title string `json:"title" validate:"required"`; Slug string `json:"slug,optional"`; Destination string `json:"destination,optional"`; Description string `json:"description,optional"`; Currency string `json:"currency,optional"`; MinPrice int64 `json:"minPrice,optional" validate:"gte=0"`; Highlights string `json:"highlights,optional"`; CoverImage string `json:"coverImage,optional"`; Images string `json:"images,optional"`; VideoUrl string `json:"videoUrl,optional"`; RichContent string `json:"richContent,optional"`; BookingNotice string `json:"bookingNotice,optional"` }
+type UpdateProductReq { Code string `json:"code" validate:"required"`; Title string `json:"title" validate:"required"`; Slug string `json:"slug,optional"`; Destination string `json:"destination,optional"`; Description string `json:"description,optional"`; Currency string `json:"currency,optional"`; MinPrice int64 `json:"minPrice,optional" validate:"gte=0"`; Highlights string `json:"highlights,optional"`; CoverImage string `json:"coverImage,optional"`; Images string `json:"images,optional"`; VideoUrl string `json:"videoUrl,optional"`; RichContent string `json:"richContent,optional"`; BookingNotice string `json:"bookingNotice,optional"` }
 type PublishProductReq { Published bool `json:"published"` }
-post /api/travel/merchant/products (CreateProductReq) returns (Product)
-put /api/travel/merchant/products/:id (UpdateProductReq) returns (Product)
-post /api/travel/merchant/products/:id/publish (PublishProductReq) returns (Product)
 
-type PackageReq { Code string `json:"code" validate:"required"`; Name string `json:"name" validate:"required"` }
-type Package { Id int64 `json:"id"`; ProductId int64 `json:"productId"`; Code string `json:"code"`; Name string `json:"name"`; Status string `json:"status"` }
+type ItineraryStopReq { StopType string `json:"stopType" validate:"required"`; Title string `json:"title" validate:"required"`; Description string `json:"description,optional"`; Sequence int `json:"sequence,optional"`; LocationName string `json:"locationName,optional"`; Address string `json:"address,optional"`; Latitude float64 `json:"latitude,optional"`; Longitude float64 `json:"longitude,optional"`; DurationMinutes int `json:"durationMinutes,optional"`; TransportType string `json:"transportType,optional"`; StartTime string `json:"startTime,optional"`; EndTime string `json:"endTime,optional"`; IsPickup bool `json:"isPickup,optional"`; IsDropoff bool `json:"isDropoff,optional"`; AgreementNoShopping bool `json:"agreementNoShopping,optional"`; AgreementAdjustable bool `json:"agreementAdjustable,optional"`; PoiId string `json:"poiId,optional"`; PoiName string `json:"poiName,optional"`; IsEntering bool `json:"isEntering,optional"`; DurationMode string `json:"durationMode,optional"`; DurationHours int `json:"durationHours,optional"`; ActivityFeatures string `json:"activityFeatures,optional"`; PickupLocation string `json:"pickupLocation,optional"`; PickupAddress string `json:"pickupAddress,optional"`; PickupLatitude float64 `json:"pickupLatitude,optional"`; PickupLongitude float64 `json:"pickupLongitude,optional"`; DropoffLocation string `json:"dropoffLocation,optional"`; DropoffAddress string `json:"dropoffAddress,optional"`; DropoffLatitude float64 `json:"dropoffLatitude,optional"`; DropoffLongitude float64 `json:"dropoffLongitude,optional"` }
+type ItineraryStop { Id int64 `json:"id"`; ProductId int64 `json:"productId"`; StopType string `json:"stopType"`; Title string `json:"title"`; Description string `json:"description"`; Sequence int `json:"sequence"`; LocationName string `json:"locationName"`; Address string `json:"address"`; Latitude float64 `json:"latitude"`; Longitude float64 `json:"longitude"`; DurationMinutes int `json:"durationMinutes"`; TransportType string `json:"transportType"`; StartTime string `json:"startTime"`; EndTime string `json:"endTime"`; IsPickup bool `json:"isPickup"`; IsDropoff bool `json:"isDropoff"`; AgreementNoShopping bool `json:"agreementNoShopping"`; AgreementAdjustable bool `json:"agreementAdjustable"`; PoiId string `json:"poiId"`; PoiName string `json:"poiName"`; IsEntering bool `json:"isEntering"`; DurationMode string `json:"durationMode"`; DurationHours int `json:"durationHours"`; ActivityFeatures string `json:"activityFeatures"`; PickupLocation string `json:"pickupLocation"`; PickupAddress string `json:"pickupAddress"`; PickupLatitude float64 `json:"pickupLatitude"`; PickupLongitude float64 `json:"pickupLongitude"`; DropoffLocation string `json:"dropoffLocation"`; DropoffAddress string `json:"dropoffAddress"`; DropoffLatitude float64 `json:"dropoffLatitude"`; DropoffLongitude float64 `json:"dropoffLongitude"` }
+type ItineraryStopListResp { Items []ItineraryStop `json:"items"` }
+
+type PackageReq { Code string `json:"code" validate:"required"`; Name string `json:"name" validate:"required"`; PricingMode string `json:"pricingMode,optional"`; InventoryMode string `json:"inventoryMode,optional"`; MinOrderQty int `json:"minOrderQty,optional"`; SellCurrency string `json:"sellCurrency,optional"`; CostCurrency string `json:"costCurrency,optional"`; GroupPrices string `json:"groupPrices,optional"`; TierPrices string `json:"tierPrices,optional"` }
+type Package { Id int64 `json:"id"`; ProductId int64 `json:"productId"`; Code string `json:"code"`; Name string `json:"name"`; Status string `json:"status"`; PricingMode string `json:"pricingMode"`; InventoryMode string `json:"inventoryMode"`; MinOrderQty int `json:"minOrderQty"`; SellCurrency string `json:"sellCurrency"`; CostCurrency string `json:"costCurrency"`; GroupPrices string `json:"groupPrices"`; TierPrices string `json:"tierPrices"` }
 type PackageListResp { Items []Package `json:"items"` }
-post /api/travel/merchant/products/:id/packages (PackageReq) returns (Package)
-get /api/travel/merchant/products/:id/packages returns (PackageListResp)
 
-type InventoryUpsertReq { Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Capacity int `json:"capacity" validate:"gte=0"`; UnitPrice int64 `json:"unitPrice" validate:"gte=0"`; Currency string `json:"currency,optional"`; Status string `json:"status,optional"` }
-type InventoryItem { Id int64 `json:"id"`; PackageId int64 `json:"packageId"`; Date string `json:"date"`; TimeSlot string `json:"timeSlot"`; Capacity int32 `json:"capacity"`; Reserved int32 `json:"reserved"`; UnitPrice int64 `json:"unitPrice"`; Currency string `json:"currency"`; Status string `json:"status"` }
+type InventoryUpsertReq { Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Capacity int `json:"capacity" validate:"gte=0"`; UnitPrice int64 `json:"unitPrice" validate:"gte=0"`; Currency string `json:"currency,optional"`; Status string `json:"status,optional"`; InventoryMode string `json:"inventoryMode,optional"`; TotalCapacity int `json:"totalCapacity,optional"`; IsOpen bool `json:"isOpen,optional"` }
+type InventoryItem { Id int64 `json:"id"`; PackageId int64 `json:"packageId"`; Date string `json:"date"`; TimeSlot string `json:"timeSlot"`; Capacity int32 `json:"capacity"`; Reserved int32 `json:"reserved"`; UnitPrice int64 `json:"unitPrice"`; Currency string `json:"currency"`; Status string `json:"status"`; InventoryMode string `json:"inventoryMode"`; TotalCapacity int32 `json:"totalCapacity"`; IsOpen bool `json:"isOpen"` }
 type InventoryListResp { Items []InventoryItem `json:"items"` }
-post /api/travel/merchant/packages/:id/inventory (InventoryUpsertReq) returns (InventoryItem)
-get /api/travel/merchant/packages/:id/inventory returns (InventoryListResp)
 
 type InventoryCheckReq { PackageId int64 `json:"packageId" validate:"gt=0"`; Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Quantity int `json:"quantity" validate:"gt=0"` }
 type InventoryCheckResp { Available bool `json:"available"`; Remaining int32 `json:"remaining"`; UnitPrice int64 `json:"unitPrice"`; Currency string `json:"currency"` }
-post /api/travel/inventory/check (InventoryCheckReq) returns (InventoryCheckResp)
 
-type CreateOrderReq { ProductId int64 `json:"productId" validate:"gt=0"`; PackageId int64 `json:"packageId" validate:"gt=0"`; Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Quantity int `json:"quantity" validate:"gt=0"`; CustomerEmail string `json:"customerEmail,optional"`; ReservationKey string `json:"reservationKey" validate:"required"` }
-type CreateOrderResp { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; Status string `json:"status"`; TotalAmount int64 `json:"totalAmount"`; Currency string `json:"currency"` }
-post /api/travel/orders (CreateOrderReq) returns (CreateOrderResp)
-get /api/travel/orders/:orderNo returns (CreateOrderResp)
+// GET query params — json optional prevents ParseJsonBody from failing on empty body
+type InventoryBatchReq { StartDate string `form:"startDate" json:"startDate,optional" validate:"required"`; EndDate string `form:"endDate" json:"endDate,optional" validate:"required"` }
+
+type Traveler { Id int64 `json:"id"`; Name string `json:"name"`; IdType string `json:"idType"`; IdNumber string `json:"idNumber"`; Phone string `json:"phone"` }
+type CreateOrderReq { ProductId int64 `json:"productId" validate:"gt=0"`; PackageId int64 `json:"packageId" validate:"gt=0"`; Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Quantity int `json:"quantity" validate:"gt=0"`; CustomerEmail string `json:"customerEmail,optional"`; CustomerName string `json:"customerName,optional"`; CustomerPhone string `json:"customerPhone,optional"`; Travelers []Traveler `json:"travelers,optional"`; Remark string `json:"remark,optional"`; ReservationKey string `json:"reservationKey" validate:"required"` }
+type OrderItem { Id int64 `json:"id"`; ProductId int64 `json:"productId"`; PackageId int64 `json:"packageId"`; TravelerId int64 `json:"travelerId"`; Quantity int32 `json:"quantity"`; UnitPrice int64 `json:"unitPrice"`; TotalAmount int64 `json:"totalAmount"`; ServiceDate string `json:"serviceDate"`; TimeSlot string `json:"timeSlot"`; ProductCode string `json:"productCode"`; ProductName string `json:"productName"`; PackageCode string `json:"packageCode"`; PackageName string `json:"packageName"` }
+type CreateOrderResp { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; Status string `json:"status"`; TotalAmount int64 `json:"totalAmount"`; Currency string `json:"currency"`; CustomerEmail string `json:"customerEmail"`; PaymentStatus string `json:"paymentStatus"`; CustomerId int64 `json:"customerId"`; CustomerName string `json:"customerName"`; CustomerPhone string `json:"customerPhone"`; Remark string `json:"remark"`; Travelers []Traveler `json:"travelers,optional"`; Items []OrderItem `json:"items,optional"`; ProductName string `json:"productName"`; PackageName string `json:"packageName"`; ServiceDate string `json:"serviceDate"`; TimeSlot string `json:"timeSlot"` }
+type OrderListResp { Items []CreateOrderResp `json:"items"`; Total int64 `json:"total"` }
 
 type CreatePaymentReq { OrderNo string `json:"orderNo" validate:"required"`; Provider string `json:"provider" validate:"required"`; IdempotencyKey string `json:"idempotencyKey" validate:"required"` }
-type PaymentResp { Id int64 `json:"id"`; PaymentNo string `json:"paymentNo"`; OrderNo string `json:"orderNo"`; Provider string `json:"provider"`; ProviderPaymentId string `json:"providerPaymentId"`; Amount int64 `json:"amount"`; Currency string `json:"currency"`; Status string `json:"status"` }
-post /api/travel/payments (CreatePaymentReq) returns (PaymentResp)
-get /api/travel/payments/:paymentNo returns (PaymentResp)
+type PaymentResp { Id int64 `json:"id"`; PaymentNo string `json:"paymentNo"`; OrderNo string `json:"orderNo"`; Provider string `json:"provider"`; ProviderPaymentId string `json:"providerPaymentId"`; Amount int64 `json:"amount"`; Currency string `json:"currency"`; Status string `json:"status"`; CheckoutURL string `json:"checkoutUrl,optional"` }
+
+type RegisterReq { Username string `json:"username" validate:"required,min=3,max=32"`; Password string `json:"password" validate:"required,min=6,max=64"`; Email string `json:"email,optional"`; Mobile string `json:"mobile,optional"`; Nickname string `json:"nickname,optional"` }
+type LoginReq { Username string `json:"username" validate:"required"`; Password string `json:"password" validate:"required"` }
+type LoginByMobileReq { Mobile string `json:"mobile" validate:"required"`; Password string `json:"password" validate:"required"` }
+type AuthTokenResp { Token string `json:"token"`; User UserProfile `json:"user"` }
+type UserProfile { Id int64 `json:"id"`; Username string `json:"username"`; Nickname string `json:"nickname"`; Email string `json:"email"`; Mobile string `json:"mobile"`; Avatar string `json:"avatar"`; Level int32 `json:"level"`; Gender int32 `json:"gender"`; Birthday string `json:"birthday"`; Bio string `json:"bio"`; Money float64 `json:"money"`; Score int32 `json:"score"`; Jointime int64 `json:"jointime"`; Logintime int64 `json:"logintime"`; Loginip string `json:"loginip"`; Status string `json:"status"`; Createtime int64 `json:"createtime"` }
+type UpdateProfileReq { Nickname string `json:"nickname,optional"`; Avatar string `json:"avatar,optional"`; Email string `json:"email,optional"`; Mobile string `json:"mobile,optional"`; Bio string `json:"bio,optional"`; Birthday string `json:"birthday,optional"`; Gender int32 `json:"gender,optional"` }
+type ChangePasswordReq { OldPassword string `json:"oldPassword" validate:"required"`; NewPassword string `json:"newPassword" validate:"required,min=6,max=64"` }
+type OkResp { Ok bool `json:"ok"`; Msg string `json:"msg"` }
+
+// ─ Service Routes ──
+service travel-api {
+	@handler ListProducts
+	get /api/travel/products (ProductListReq) returns (ProductListResp)
+
+	@handler ProductDetail
+	get /api/travel/products/:id returns (Product)
+
+	@handler ListPackages
+	get /api/travel/products/:id/packages returns (PackageListResp)
+
+	@handler ListMerchantProducts
+	get /api/travel/merchant/products (ProductListReq) returns (ProductListResp)
+
+	@handler CreateProduct
+	post /api/travel/merchant/products (CreateProductReq) returns (Product)
+
+	@handler UpdateProduct
+	put /api/travel/merchant/products/:id (UpdateProductReq) returns (Product)
+
+	@handler PublishProduct
+	post /api/travel/merchant/products/:id/publish (PublishProductReq) returns (Product)
+
+	@handler CreatePackage
+	post /api/travel/merchant/products/:id/packages (PackageReq) returns (Package)
+
+	@handler ListMerchantPackages
+	get /api/travel/merchant/products/:id/packages returns (PackageListResp)
+
+	@handler UpdatePackage
+	put /api/travel/merchant/packages/:id (PackageReq) returns (Package)
+
+	@handler UpsertInventory
+	post /api/travel/merchant/packages/:id/inventory (InventoryUpsertReq) returns (InventoryItem)
+
+	@handler ListInventory
+	get /api/travel/merchant/packages/:id/inventory returns (InventoryListResp)
+
+	@handler CreateItineraryStop
+	post /api/travel/merchant/products/:id/itinerary-stops (ItineraryStopReq) returns (ItineraryStop)
+
+	@handler UpdateItineraryStop
+	put /api/travel/merchant/products/:id/itinerary-stops/:stopId (ItineraryStopReq) returns (ItineraryStop)
+
+	@handler DeleteItineraryStop
+	delete /api/travel/merchant/products/:id/itinerary-stops/:stopId returns (OkResp)
+
+	@handler ListItineraryStops
+	get /api/travel/merchant/products/:id/itinerary-stops returns (ItineraryStopListResp)
+
+	@handler CheckInventory
+	post /api/travel/inventory/check (InventoryCheckReq) returns (InventoryCheckResp)
+
+	@handler BatchInventory
+	get /api/travel/inventory/packages/:packageId/batch (InventoryBatchReq) returns (InventoryListResp)
+
+	@handler CreateOrder
+	post /api/travel/orders (CreateOrderReq) returns (CreateOrderResp)
+
+	@handler GetOrder
+	get /api/travel/orders/:orderNo returns (CreateOrderResp)
+
+	@handler ListMerchantOrders
+	get /api/travel/merchant/orders (ProductListReq) returns (OrderListResp)
+
+	@handler ListMyOrders
+	get /api/travel/my/orders (ProductListReq) returns (OrderListResp)
+
+	@handler CreatePayment
+	post /api/travel/payments (CreatePaymentReq) returns (PaymentResp)
+
+	@handler GetPayment
+	get /api/travel/payments/:paymentNo returns (PaymentResp)
+
+	@handler PayPalReturn
+	get /api/travel/payments/paypal/return returns (PaymentResp)
+
+	@handler PayPalCancel
+	get /api/travel/payments/paypal/cancel returns (OkResp)
+
+	@handler PayPalWebhook
+	post /api/travel/payments/paypal/webhook
+
+	@handler Register
+	post /api/travel/user/register (RegisterReq) returns (AuthTokenResp)
+
+	@handler Login
+	post /api/travel/user/login (LoginReq) returns (AuthTokenResp)
+
+	@handler LoginByMobile
+	post /api/travel/user/login-mobile (LoginByMobileReq) returns (AuthTokenResp)
+
+	@handler GetProfile
+	get /api/travel/user/profile returns (UserProfile)
+
+	@handler UpdateProfile
+	put /api/travel/user/profile (UpdateProfileReq) returns (UserProfile)
+
+	@handler ChangePassword
+	put /api/travel/user/password (ChangePasswordReq) returns (OkResp)
+}

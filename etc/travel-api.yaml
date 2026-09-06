@@ -1,16 +1,32 @@
 Name: travel-api
 Host: 0.0.0.0
-Port: 9200
-Timeout: 10000
+Port: 9206
+Timeout: 80000
+
+DatabaseConf:
+  Type: mysql
+  Host: 127.0.0.1
+  Port: 13307
+  DBName: travel
+  Username: root
+  Password: '123456'
+  MaxOpenConn: 100
+  SSLMode: disable
+  CacheTime: 5
+  Debug: true
+
+AllowInit: true
+
 TravelRpc:
-  Target: 127.0.0.1:9201
+  Target: 127.0.0.1:9205
 Payment:
   FrontendReturnURL: ""
   PayPal:
     Enabled: true
     BaseURL: https://api-m.sandbox.paypal.com
-    ClientID: ""
-    Secret: ""
-    WebhookID: ""
-    ReturnURL: https://travel.code688.com/api/travel/payments/paypal/return
+    ClientID: "BAAJEvliAxJ3EOHWK2A76GuO7xlEJqf_PcEzmnEP6lQkZ_w69TQdqdr_VIR9t50ErYLBAhavCBey6hjEyY"
+    Secret: "ENN-OhPdraC12s20in_d26q2rWCO-KiPLYXcHH9WyO7CgiqRx6UlpvQFJw8q97Qj4-sI7abX4pU94ApS"
+    WebhookID: "7A197056BN282641K"
+    SkipVerify: true
+    ReturnURL: https://travel.code688.com/payments/return
     CancelURL: https://travel.code688.com/api/travel/payments/paypal/cancel
