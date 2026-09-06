@@ -44,6 +44,10 @@ type Capture struct {
 	CaptureID string
 	Status    string
 }
+type RefundResult struct {
+	RefundID string
+	Status   string
+}
 
 func New(cfg Config) *Provider {
 	if cfg.BaseURL == "" {
@@ -170,6 +174,41 @@ func (p *Provider) CaptureOrder(ctx context.Context, orderID string) (*Capture, 
 		}
 	}
 	return c, nil
+}
+
+func (p *Provider) RefundCapture(ctx context.Context, captureID string, amount int64, currency string) (*RefundResult, error) {
+	token, err := p.accessToken(ctx)
+	if err != nil {
+		return nil, err
+	}
+	body := map[string]any{}
+	if amount > 0 {
+		body["amount"] = map[string]string{"value": minorToMajor(amount, currency), "currency_code": strings.ToUpper(currency)}
+	}
+	raw, _ := json.Marshal(body)
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, strings.TrimRight(p.cfg.BaseURL, "/")+"/v2/payments/captures/"+url.PathEscape(captureID)+"/refund", bytes.NewReader(raw))
+	if err != nil {
+		return nil, err
+	}
+	req.Header.Set("Authorization", "Bearer "+token)
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := p.httpClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+	data, _ := io.ReadAll(resp.Body)
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return nil, fmt.Errorf("paypal refund failed: status=%d body=%s", resp.StatusCode, truncate(string(data)))
+	}
+	var out struct {
+		ID     string `json:"id"`
+		Status string `json:"status"`
+	}
+	if err := json.Unmarshal(data, &out); err != nil {
+		return nil, err
+	}
+	return &RefundResult{RefundID: out.ID, Status: out.Status}, nil
 }
 
 func (p *Provider) VerifyWebhook(ctx context.Context, headers http.Header, event json.RawMessage) error {
