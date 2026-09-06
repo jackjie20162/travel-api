@@ -201,6 +201,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/api/travel/my/orders/:orderNo/cancel",
+				Handler: CancelOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/api/travel/reviews",
 				Handler: CreateReviewHandler(serverCtx),
 			},

@@ -505,6 +505,12 @@ type HandleRefundResp struct {
 	RejectReason string `json:"rejectReason,optional"`
 }
 
+// swagger:model CancelOrderResp
+type CancelOrderResp struct {
+	OrderNo string `json:"orderNo"`
+	Status  string `json:"status"`
+}
+
 // swagger:model CreateReviewReq
 type CreateReviewReq struct {
 	// required : true

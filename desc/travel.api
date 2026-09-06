@@ -63,6 +63,8 @@ type RequestRefundResp { OrderNo string `json:"orderNo"`; Status string `json:"s
 type HandleRefundReq { Action string `json:"action" validate:"required,oneof=APPROVE REJECT"`; Reason string `json:"reason,optional"` }
 type HandleRefundResp { OrderNo string `json:"orderNo"`; Status string `json:"status"`; RejectReason string `json:"rejectReason,optional"` }
 
+type CancelOrderResp { OrderNo string `json:"orderNo"`; Status string `json:"status"` }
+
 type CreateReviewReq { OrderNo string `json:"orderNo" validate:"required"`; ProductId int64 `json:"productId" validate:"gt=0"`; Rating int `json:"rating" validate:"gte=1,lte=5"`; ServiceRating int `json:"serviceRating,optional"`; ValueRating int `json:"valueRating,optional"`; Content string `json:"content,optional"`; Images string `json:"images,optional"` }
 type Review { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; ProductId int64 `json:"productId"`; UserId int64 `json:"userId"`; Rating int32 `json:"rating"`; ServiceRating int32 `json:"serviceRating"`; ValueRating int32 `json:"valueRating"`; Content string `json:"content"`; Images string `json:"images"`; ReplyContent string `json:"replyContent,optional"`; ReplyTime int64 `json:"replyTime,optional"`; Status string `json:"status"`; UserName string `json:"userName,optional"`; ProductName string `json:"productName,optional"` }
 type ReviewListResp { Items []Review `json:"items"`; Total int64 `json:"total"`; AvgRating float64 `json:"avgRating"` }
@@ -180,6 +182,9 @@ service travel-api {
 
 	@handler RequestRefund
 	post /api/travel/my/orders/:orderNo/refund (RequestRefundReq) returns (RequestRefundResp)
+
+	@handler CancelOrder
+	post /api/travel/my/orders/:orderNo/cancel returns (CancelOrderResp)
 
 	@handler CreateReview
 	post /api/travel/reviews (CreateReviewReq) returns (Review)
