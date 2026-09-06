@@ -1,8 +1,0 @@
-feat: review system API - handler/logic/routes/types
-
-- travel.api desc add review types and 4 routes
-- types.go add CreateReviewReq, Review, ReviewListResp, ReplyReviewReq
-- 4 new handlers + 4 new logic files for review CRUD
-- service_context.go add ReviewClient
-- helper.go add attachCustomerID utility
-- routes.go register 4 review endpoints
