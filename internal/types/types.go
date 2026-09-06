@@ -260,7 +260,7 @@ type InventoryBatchReq struct {
 }
 
 type Traveler struct {
-	Id       int64  `json:"id"`
+	Id       int64  `json:"id,optional"`
 	Name     string `json:"name"`
 	IdType   string `json:"idType"`
 	IdNumber string `json:"idNumber"`
