@@ -17,6 +17,21 @@ import (
 
 // ── gRPC context builders ──
 
+// publicRpcContext builds gRPC context with optional tenant/merchant for public endpoints.
+func publicRpcContext(ctx context.Context) context.Context {
+	kv := make([]string, 0, 4)
+	if tenant, ok := middleware.TenantID(ctx); ok {
+		kv = append(kv, "x-tenant-id", strconv.FormatInt(tenant, 10))
+	}
+	if merchant, ok := middleware.MerchantID(ctx); ok {
+		kv = append(kv, "x-merchant-id", strconv.FormatInt(merchant, 10))
+	}
+	if len(kv) > 0 {
+		return metadata.AppendToOutgoingContext(ctx, kv...)
+	}
+	return ctx
+}
+
 func rpcContext(ctx context.Context) (context.Context, error) {
 	tenant, ok := middleware.TenantID(ctx)
 	if !ok {

@@ -21,7 +21,7 @@ import (
 func PayPalReturnHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		l := logic.NewPayPalReturnLogic(r.Context(), svcCtx)
-		resp, err := l.PayPalReturn()
+		resp, err := l.PayPalReturn(r)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 		} else {
