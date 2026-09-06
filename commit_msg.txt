@@ -1,0 +1,13 @@
+﻿fix:
+修复退款和取消订单接口无法获取路径参数的问题
+
+-
+request_refund_handler.go
+添加
+SetPathParams
+调用
+-
+cancel_order_handler.go
+添加
+SetPathParams
+调用

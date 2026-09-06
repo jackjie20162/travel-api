@@ -20,12 +20,13 @@ import (
 
 func CancelOrderHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		l := logic.NewCancelOrderLogic(r.Context(), svcCtx)
+		ctx := logic.SetPathParams(r.Context(), r)
+		l := logic.NewCancelOrderLogic(ctx, svcCtx)
 		resp, err := l.CancelOrder()
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			httpx.OkJsonCtx(ctx, w, resp)
 		}
 	}
 }

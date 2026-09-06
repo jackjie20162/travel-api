@@ -27,18 +27,19 @@ import (
 
 func RequestRefundHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
+		ctx := logic.SetPathParams(r.Context(), r)
 		var req types.RequestRefundReq
 		if err := httpx.Parse(r, &req, true); err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 			return
 		}
 
-		l := logic.NewRequestRefundLogic(r.Context(), svcCtx)
+		l := logic.NewRequestRefundLogic(ctx, svcCtx)
 		resp, err := l.RequestRefund(&req)
 		if err != nil {
-			httpx.ErrorCtx(r.Context(), w, err)
+			httpx.ErrorCtx(ctx, w, err)
 		} else {
-			httpx.OkJsonCtx(r.Context(), w, resp)
+			httpx.OkJsonCtx(ctx, w, resp)
 		}
 	}
 }
