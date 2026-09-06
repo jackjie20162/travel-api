@@ -140,6 +140,7 @@ func toOrderResp(o *travel.Order) *types.CreateOrderResp {
 		CustomerPhone: o.GetCustomerPhone(), Remark: o.GetRemark(),
 		ProductName: o.GetProductName(), PackageName: o.GetPackageName(),
 		ServiceDate: o.GetServiceDate(), TimeSlot: o.GetTimeSlot(),
+		RejectReason: o.GetRejectReason(), VerifiedAt: o.GetVerifiedAt(),
 	}
 	for _, t := range o.GetTravelers() {
 		resp.Travelers = append(resp.Travelers, types.Traveler{

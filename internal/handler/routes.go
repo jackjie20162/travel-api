@@ -179,6 +179,11 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/api/travel/user/password",
 				Handler: ChangePasswordHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/merchant/orders/:orderNo/verify",
+				Handler: VerifyOrderHandler(serverCtx),
+			},
 		},
 	)
 }

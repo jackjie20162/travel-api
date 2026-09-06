@@ -49,6 +49,9 @@ type UpdateProfileReq { Nickname string `json:"nickname,optional"`; Avatar strin
 type ChangePasswordReq { OldPassword string `json:"oldPassword" validate:"required"`; NewPassword string `json:"newPassword" validate:"required,min=6,max=64"` }
 type OkResp { Ok bool `json:"ok"`; Msg string `json:"msg"` }
 
+type VerifyOrderReq { Action string `json:"action" validate:"required,oneof=CONFIRM REJECT"`; Reason string `json:"reason,optional"` }
+type VerifyOrderResp { OrderNo string `json:"orderNo"`; Status string `json:"status"`; RejectReason string `json:"rejectReason,optional"`; VerifiedAt int64 `json:"verifiedAt,optional"` }
+
 // ─ Service Routes ──
 service travel-api {
 	@handler ListProducts
@@ -149,4 +152,7 @@ service travel-api {
 
 	@handler ChangePassword
 	put /api/travel/user/password (ChangePasswordReq) returns (OkResp)
+
+	@handler VerifyOrder
+	post /api/travel/merchant/orders/:orderNo/verify (VerifyOrderReq) returns (VerifyOrderResp)
 }

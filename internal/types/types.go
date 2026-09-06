@@ -323,6 +323,8 @@ type CreateOrderResp struct {
 	PackageName   string      `json:"packageName"`
 	ServiceDate   string      `json:"serviceDate"`
 	TimeSlot      string      `json:"timeSlot"`
+	RejectReason  string      `json:"rejectReason,optional"`
+	VerifiedAt    int64       `json:"verifiedAt,optional"`
 }
 
 // swagger:model CreatePaymentReq
@@ -436,4 +438,18 @@ type OrderListResp struct {
 type OkResp struct {
 	Ok  bool   `json:"ok"`
 	Msg string `json:"msg"`
+}
+
+// swagger:model VerifyOrderReq
+type VerifyOrderReq struct {
+	Action string `json:"action" validate:"required,oneof=CONFIRM REJECT"`
+	Reason string `json:"reason,optional"`
+}
+
+// swagger:model VerifyOrderResp
+type VerifyOrderResp struct {
+	OrderNo      string `json:"orderNo"`
+	Status       string `json:"status"`
+	RejectReason string `json:"rejectReason,optional"`
+	VerifiedAt   int64  `json:"verifiedAt,optional"`
 }
