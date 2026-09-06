@@ -1,5 +1,0 @@
-﻿fix:
-Traveler.Id
-字段添加
-optional
-标签，修复创建订单时严格校验失败
