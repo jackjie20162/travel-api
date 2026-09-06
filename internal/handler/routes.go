@@ -184,6 +184,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/api/travel/merchant/orders/:orderNo/verify",
 				Handler: VerifyOrderHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/reviews",
+				Handler: CreateReviewHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/products/:id/reviews",
+				Handler: ListProductReviewsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/my/orders/:orderNo/review",
+				Handler: GetOrderReviewHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/merchant/reviews/:id/reply",
+				Handler: ReplyReviewHandler(serverCtx),
+			},
 		},
 	)
 }

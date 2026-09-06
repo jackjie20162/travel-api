@@ -19,6 +19,7 @@ type ServiceContext struct {
 	PaymentClient    travel.PaymentServiceClient
 	ManagementClient travel.TravelManagementServiceClient
 	UserClient       travel.UserServiceClient
+	ReviewClient     travel.ReviewServiceClient
 	PayPal           *paypal.Provider
 }
 
@@ -40,6 +41,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		PaymentClient:    travel.NewPaymentServiceClient(conn.Conn()),
 		ManagementClient: travel.NewTravelManagementServiceClient(conn.Conn()),
 		UserClient:       travel.NewUserServiceClient(conn.Conn()),
+		ReviewClient:     travel.NewReviewServiceClient(conn.Conn()),
 		PayPal:           paypal.New(paypal.Config{Enabled: c.Payment.PayPal.Enabled, BaseURL: c.Payment.PayPal.BaseURL, ClientID: c.Payment.PayPal.ClientID, Secret: c.Payment.PayPal.Secret, WebhookID: c.Payment.PayPal.WebhookID, ReturnURL: c.Payment.PayPal.ReturnURL, CancelURL: c.Payment.PayPal.CancelURL, SkipVerify: c.Payment.PayPal.SkipVerify}),
 	}
 }

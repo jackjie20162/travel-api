@@ -1,31 +1,8 @@
-﻿feat:
-订单核销API
--
-handler/logic/routes/types
+feat: review system API - handler/logic/routes/types
 
--
-travel.api
-新增
-VerifyOrderReq/Resp
-类型和
-POST
-/merchant/orders/:orderNo/verify
-路由
--
-types.go
-新增
-VerifyOrderReq/VerifyOrderResp，CreateOrderResp
-新增
-rejectReason/verifiedAt
--
-新增
-verify_order_handler.go
-和
-verify_order_logic.go
--
-routes.go
-注册核销路由
--
-helper.go
-toOrderResp
-映射新字段
+- travel.api desc add review types and 4 routes
+- types.go add CreateReviewReq, Review, ReviewListResp, ReplyReviewReq
+- 4 new handlers + 4 new logic files for review CRUD
+- service_context.go add ReviewClient
+- helper.go add attachCustomerID utility
+- routes.go register 4 review endpoints

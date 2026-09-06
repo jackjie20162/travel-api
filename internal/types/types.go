@@ -453,3 +453,46 @@ type VerifyOrderResp struct {
 	RejectReason string `json:"rejectReason,optional"`
 	VerifiedAt   int64  `json:"verifiedAt,optional"`
 }
+
+// swagger:model CreateReviewReq
+type CreateReviewReq struct {
+	OrderNo string `json:"orderNo" validate:"required"`
+	// min : 1
+	ProductId int64 `json:"productId" validate:"gt=0"`
+	// min : 1
+	// max : 5
+	Rating int `json:"rating" validate:"gte=1,lte=5"`
+	ServiceRating int    `json:"serviceRating,optional"`
+	ValueRating   int    `json:"valueRating,optional"`
+	Content       string `json:"content,optional"`
+	Images        string `json:"images,optional"`
+}
+
+type Review struct {
+	Id            int64  `json:"id"`
+	OrderNo       string `json:"orderNo"`
+	ProductId     int64  `json:"productId"`
+	UserId        int64  `json:"userId"`
+	Rating        int32  `json:"rating"`
+	ServiceRating int32  `json:"serviceRating"`
+	ValueRating   int32  `json:"valueRating"`
+	Content       string `json:"content"`
+	Images        string `json:"images"`
+	ReplyContent  string `json:"replyContent,optional"`
+	ReplyTime     int64  `json:"replyTime,optional"`
+	Status        string `json:"status"`
+	UserName      string `json:"userName,optional"`
+	ProductName   string `json:"productName,optional"`
+}
+
+// swagger:model ReviewListResp
+type ReviewListResp struct {
+	Items     []Review `json:"items"`
+	Total     int64    `json:"total"`
+	AvgRating float64  `json:"avgRating"`
+}
+
+// swagger:model ReplyReviewReq
+type ReplyReviewReq struct {
+	ReplyContent string `json:"replyContent" validate:"required"`
+}

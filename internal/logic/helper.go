@@ -59,6 +59,16 @@ func userRpcContext(ctx context.Context, userID int64) (context.Context, error) 
 	)), nil
 }
 
+// attachCustomerID adds x-customer-id to existing gRPC metadata context.
+func attachCustomerID(ctx context.Context, userID int64) context.Context {
+	md, ok := metadata.FromOutgoingContext(ctx)
+	if !ok {
+		md = metadata.MD{}
+	}
+	md.Set("x-customer-id", strconv.FormatInt(userID, 10))
+	return metadata.NewOutgoingContext(ctx, md)
+}
+
 // ── path param helpers via context ──
 
 func pathVal(ctx context.Context, name string) string {
