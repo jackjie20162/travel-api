@@ -30,7 +30,7 @@ func (l *CreateReviewLogic) CreateReview(req *types.CreateReviewReq) (*types.Rev
 
 	// Inject user ID for authentication
 	if userID, ok := middleware.AuthUserID(l.ctx); ok && userID > 0 {
-		ctx = attachCustomerID(ctx, userID)
+		ctx = attachUserID(ctx, userID)
 	}
 
 	resp, err := l.svcCtx.ReviewClient.Create(ctx, &travel.CreateReviewRequest{

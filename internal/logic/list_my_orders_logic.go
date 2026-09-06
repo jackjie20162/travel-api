@@ -23,11 +23,11 @@ func NewListMyOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 }
 
 func (l *ListMyOrdersLogic) ListMyOrders(req *types.ProductListReq) (*types.OrderListResp, error) {
-	customerID, ok := middleware.AuthUserID(l.ctx)
+	userID, ok := middleware.AuthUserID(l.ctx)
 	if !ok {
 		return nil, errors.New("unauthorized")
 	}
-	ctx, err := customerRpcContext(l.ctx, customerID)
+	ctx, err := userRpcContext(l.ctx, userID)
 	if err != nil {
 		return nil, err
 	}
@@ -40,7 +40,7 @@ func (l *ListMyOrdersLogic) ListMyOrders(req *types.ProductListReq) (*types.Orde
 		pageSize = 20
 	}
 	resp, err := l.svcCtx.OrderClient.ListCustomerOrders(ctx, &travel.CustomerOrderListRequest{
-		CustomerId: customerID,
+		CustomerId: userID,
 		Status:     req.Status,
 		Page:       page,
 		PageSize:   pageSize,

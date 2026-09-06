@@ -3,7 +3,6 @@ package logic
 import (
 	"context"
 
-	"gitee.com/meinongyihe/travel-api/internal/middleware"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"gitee.com/meinongyihe/travel-api/internal/types"
 	"gitee.com/meinongyihe/travel-rpc/travel"
@@ -26,13 +25,6 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (*types.Create
 	if err != nil {
 		return nil, err
 	}
-	// Prefer the authenticated user ID as customerID; fall back to header value
-	var customerID int64
-	if id, ok := middleware.AuthUserID(l.ctx); ok {
-		customerID = id
-	} else {
-		customerID, _ = middleware.CustomerID(l.ctx)
-	}
 
 	var travelers []*travel.Traveler
 	for _, t := range req.Travelers {
@@ -51,7 +43,6 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (*types.Create
 		CustomerName:   req.CustomerName,
 		CustomerPhone:  req.CustomerPhone,
 		ReservationKey: req.ReservationKey,
-		CustomerId:     customerID,
 		Travelers:      travelers,
 		Remark:         req.Remark,
 	})

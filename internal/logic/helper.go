@@ -45,12 +45,13 @@ func rpcContext(ctx context.Context) (context.Context, error) {
 		"x-tenant-id", strconv.FormatInt(tenant, 10),
 		"x-merchant-id", strconv.FormatInt(merchant, 10),
 	}
-	// Pass user_id (归属人) if available from authenticated user
+	// Pass user_id (账号归属人) from authenticated user
 	if userID, ok := middleware.AuthUserID(ctx); ok && userID > 0 {
-		pairs = append(pairs,
-			"x-customer-id", strconv.FormatInt(userID, 10),
-			"x-user-id", strconv.FormatInt(userID, 10),
-		)
+		pairs = append(pairs, "x-user-id", strconv.FormatInt(userID, 10))
+	}
+	// Pass customer_id (联系人) only when X-Customer-ID header is explicitly set
+	if customerID, ok := middleware.CustomerID(ctx); ok && customerID > 0 {
+		pairs = append(pairs, "x-customer-id", strconv.FormatInt(customerID, 10))
 	}
 	return metadata.NewOutgoingContext(ctx, metadata.Pairs(pairs...)), nil
 }
@@ -63,7 +64,6 @@ func customerRpcContext(ctx context.Context, customerID int64) (context.Context,
 	return metadata.NewOutgoingContext(ctx, metadata.Pairs(
 		"x-tenant-id", strconv.FormatInt(tenant, 10),
 		"x-customer-id", strconv.FormatInt(customerID, 10),
-		"x-user-id", strconv.FormatInt(customerID, 10),
 	)), nil
 }
 
@@ -78,13 +78,12 @@ func userRpcContext(ctx context.Context, userID int64) (context.Context, error) 
 	)), nil
 }
 
-// attachCustomerID adds x-customer-id and x-user-id to existing gRPC metadata context.
-func attachCustomerID(ctx context.Context, userID int64) context.Context {
+// attachUserID adds x-user-id (账号归属人) to existing gRPC metadata context.
+func attachUserID(ctx context.Context, userID int64) context.Context {
 	md, ok := metadata.FromOutgoingContext(ctx)
 	if !ok {
 		md = metadata.MD{}
 	}
-	md.Set("x-customer-id", strconv.FormatInt(userID, 10))
 	md.Set("x-user-id", strconv.FormatInt(userID, 10))
 	return metadata.NewOutgoingContext(ctx, md)
 }
