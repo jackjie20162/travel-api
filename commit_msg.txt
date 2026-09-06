@@ -1,0 +1,5 @@
+feat: API 层 toOrderResp 映射 OrderItem 列表 + 产品快照字段
+
+- helper.go toOrderResp 新增 Items 映射：proto OrderItem → types.OrderItem
+- toOrderResp 补充 ProductName/PackageName/ServiceDate/TimeSlot 字段映射
+- 订单详情接口现在返回完整订单项列表（含产品/套餐快照、出行人ID、服务日期）

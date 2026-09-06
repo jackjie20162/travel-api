@@ -133,11 +133,23 @@ func toOrderResp(o *travel.Order) *types.CreateOrderResp {
 		CustomerEmail: o.GetCustomerEmail(), PaymentStatus: o.GetPaymentStatus(),
 		CustomerId: o.GetCustomerId(), CustomerName: o.GetCustomerName(),
 		CustomerPhone: o.GetCustomerPhone(), Remark: o.GetRemark(),
+		ProductName: o.GetProductName(), PackageName: o.GetPackageName(),
+		ServiceDate: o.GetServiceDate(), TimeSlot: o.GetTimeSlot(),
 	}
 	for _, t := range o.GetTravelers() {
 		resp.Travelers = append(resp.Travelers, types.Traveler{
 			Id: t.GetId(), Name: t.GetName(), IdType: t.GetIdType(),
 			IdNumber: t.GetIdNumber(), Phone: t.GetPhone(),
+		})
+	}
+	for _, item := range o.GetItems() {
+		resp.Items = append(resp.Items, types.OrderItem{
+			Id: item.GetId(), ProductId: item.GetProductId(), PackageId: item.GetPackageId(),
+			TravelerId: item.GetTravelerId(), Quantity: item.GetQuantity(),
+			UnitPrice: item.GetUnitPrice(), TotalAmount: item.GetTotalAmount(),
+			ServiceDate: item.GetServiceDate(), TimeSlot: item.GetTimeSlot(),
+			ProductCode: item.GetProductCode(), ProductName: item.GetProductName(),
+			PackageCode: item.GetPackageCode(), PackageName: item.GetPackageName(),
 		})
 	}
 	return resp
