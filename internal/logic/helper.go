@@ -26,10 +26,15 @@ func rpcContext(ctx context.Context) (context.Context, error) {
 	if !ok {
 		return nil, errors.New("missing merchant context")
 	}
-	return metadata.NewOutgoingContext(ctx, metadata.Pairs(
+	pairs := []string{
 		"x-tenant-id", strconv.FormatInt(tenant, 10),
 		"x-merchant-id", strconv.FormatInt(merchant, 10),
-	)), nil
+	}
+	// Pass user_id (归属人) if available from authenticated user
+	if userID, ok := middleware.AuthUserID(ctx); ok && userID > 0 {
+		pairs = append(pairs, "x-customer-id", strconv.FormatInt(userID, 10))
+	}
+	return metadata.NewOutgoingContext(ctx, metadata.Pairs(pairs...)), nil
 }
 
 func customerRpcContext(ctx context.Context, customerID int64) (context.Context, error) {
