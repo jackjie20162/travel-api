@@ -28,13 +28,13 @@ import (
 func BatchInventoryHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		var req types.InventoryBatchReq
-		if err := httpx.Parse(r, &req, true); err != nil {
+		if err := httpx.ParseForm(r, &req); err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
 			return
 		}
 
 		ctx := logic.SetPathParams(r.Context(), r)
-			l := logic.NewBatchInventoryLogic(ctx, svcCtx)
+		l := logic.NewBatchInventoryLogic(ctx, svcCtx)
 		resp, err := l.BatchInventory(&req)
 		if err != nil {
 			httpx.ErrorCtx(r.Context(), w, err)
