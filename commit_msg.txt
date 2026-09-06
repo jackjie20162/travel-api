@@ -1,5 +1,0 @@
-fix: 批量库存查询接口实现 + GET 请求解析修复
-
-- batch_inventory_logic: 从空桩改为 ent 直查，按 packageId + 日期范围 + merchantID 过滤
-- batch_inventory_handler: httpx.Parse 改为 httpx.ParseForm，修复 GET 请求 query 参数解析失败
-- 修复缩进问题
