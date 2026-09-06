@@ -6,7 +6,6 @@ package types
 type ProductListReq struct {
 	Keyword     string `form:"keyword,optional"`
 	Destination string `form:"destination,optional"`
-	Status      string `form:"status,optional"`
 	// min : 1
 	Page int `form:"page,optional" validate:"gte=1"`
 	// min : 1
@@ -261,7 +260,7 @@ type InventoryBatchReq struct {
 }
 
 type Traveler struct {
-	Id       int64  `json:"id,optional"`
+	Id       int64  `json:"id"`
 	Name     string `json:"name"`
 	IdType   string `json:"idType"`
 	IdNumber string `json:"idNumber"`
@@ -325,6 +324,22 @@ type CreateOrderResp struct {
 	TimeSlot      string      `json:"timeSlot"`
 	RejectReason  string      `json:"rejectReason,optional"`
 	VerifiedAt    int64       `json:"verifiedAt,optional"`
+}
+
+// swagger:model OrderListResp
+type OrderListResp struct {
+	Items []CreateOrderResp `json:"items"`
+	Total int64             `json:"total"`
+}
+
+// swagger:model OrderListReq
+type OrderListReq struct {
+	Status string `form:"status,optional"`
+	// min : 1
+	Page int `form:"page,optional" validate:"gte=1"`
+	// min : 1
+	// max : 100
+	PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"`
 }
 
 // swagger:model CreatePaymentReq
@@ -428,12 +443,6 @@ type ChangePasswordReq struct {
 	NewPassword string `json:"newPassword" validate:"required,min=6,max=64"`
 }
 
-// swagger:model OrderListResp
-type OrderListResp struct {
-	Items []CreateOrderResp `json:"items"`
-	Total int64             `json:"total"`
-}
-
 // swagger:model OkResp
 type OkResp struct {
 	Ok  bool   `json:"ok"`
@@ -442,6 +451,7 @@ type OkResp struct {
 
 // swagger:model VerifyOrderReq
 type VerifyOrderReq struct {
+	// required : true
 	Action string `json:"action" validate:"required,oneof=CONFIRM REJECT"`
 	Reason string `json:"reason,optional"`
 }
@@ -454,14 +464,56 @@ type VerifyOrderResp struct {
 	VerifiedAt   int64  `json:"verifiedAt,optional"`
 }
 
+// swagger:model AcceptOrderReq
+type AcceptOrderReq struct {
+	// required : true
+	Action string `json:"action" validate:"required,oneof=ACCEPT REJECT"`
+	Reason string `json:"reason,optional"`
+}
+
+// swagger:model AcceptOrderResp
+type AcceptOrderResp struct {
+	OrderNo      string `json:"orderNo"`
+	Status       string `json:"status"`
+	RejectReason string `json:"rejectReason,optional"`
+}
+
+// swagger:model RequestRefundReq
+type RequestRefundReq struct {
+	// required : true
+	Reason string `json:"reason" validate:"required"`
+}
+
+// swagger:model RequestRefundResp
+type RequestRefundResp struct {
+	OrderNo      string `json:"orderNo"`
+	Status       string `json:"status"`
+	RejectReason string `json:"rejectReason,optional"`
+}
+
+// swagger:model HandleRefundReq
+type HandleRefundReq struct {
+	// required : true
+	Action string `json:"action" validate:"required,oneof=APPROVE REJECT"`
+	Reason string `json:"reason,optional"`
+}
+
+// swagger:model HandleRefundResp
+type HandleRefundResp struct {
+	OrderNo      string `json:"orderNo"`
+	Status       string `json:"status"`
+	RejectReason string `json:"rejectReason,optional"`
+}
+
 // swagger:model CreateReviewReq
 type CreateReviewReq struct {
+	// required : true
 	OrderNo string `json:"orderNo" validate:"required"`
-	// min : 1
+	// min : 0
 	ProductId int64 `json:"productId" validate:"gt=0"`
 	// min : 1
 	// max : 5
-	Rating int `json:"rating" validate:"gte=1,lte=5"`
+	Rating        int    `json:"rating" validate:"gte=1,lte=5"`
 	ServiceRating int    `json:"serviceRating,optional"`
 	ValueRating   int    `json:"valueRating,optional"`
 	Content       string `json:"content,optional"`
@@ -494,5 +546,6 @@ type ReviewListResp struct {
 
 // swagger:model ReplyReviewReq
 type ReplyReviewReq struct {
+	// required : true
 	ReplyContent string `json:"replyContent" validate:"required"`
 }

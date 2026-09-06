@@ -34,8 +34,10 @@ type InventoryBatchReq { StartDate string `form:"startDate" json:"startDate,opti
 type Traveler { Id int64 `json:"id"`; Name string `json:"name"`; IdType string `json:"idType"`; IdNumber string `json:"idNumber"`; Phone string `json:"phone"` }
 type CreateOrderReq { ProductId int64 `json:"productId" validate:"gt=0"`; PackageId int64 `json:"packageId" validate:"gt=0"`; Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Quantity int `json:"quantity" validate:"gt=0"`; CustomerEmail string `json:"customerEmail,optional"`; CustomerName string `json:"customerName,optional"`; CustomerPhone string `json:"customerPhone,optional"`; Travelers []Traveler `json:"travelers,optional"`; Remark string `json:"remark,optional"`; ReservationKey string `json:"reservationKey" validate:"required"` }
 type OrderItem { Id int64 `json:"id"`; ProductId int64 `json:"productId"`; PackageId int64 `json:"packageId"`; TravelerId int64 `json:"travelerId"`; Quantity int32 `json:"quantity"`; UnitPrice int64 `json:"unitPrice"`; TotalAmount int64 `json:"totalAmount"`; ServiceDate string `json:"serviceDate"`; TimeSlot string `json:"timeSlot"`; ProductCode string `json:"productCode"`; ProductName string `json:"productName"`; PackageCode string `json:"packageCode"`; PackageName string `json:"packageName"` }
-type CreateOrderResp { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; Status string `json:"status"`; TotalAmount int64 `json:"totalAmount"`; Currency string `json:"currency"`; CustomerEmail string `json:"customerEmail"`; PaymentStatus string `json:"paymentStatus"`; CustomerId int64 `json:"customerId"`; CustomerName string `json:"customerName"`; CustomerPhone string `json:"customerPhone"`; Remark string `json:"remark"`; Travelers []Traveler `json:"travelers,optional"`; Items []OrderItem `json:"items,optional"`; ProductName string `json:"productName"`; PackageName string `json:"packageName"`; ServiceDate string `json:"serviceDate"`; TimeSlot string `json:"timeSlot"` }
+type CreateOrderResp { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; Status string `json:"status"`; TotalAmount int64 `json:"totalAmount"`; Currency string `json:"currency"`; CustomerEmail string `json:"customerEmail"`; PaymentStatus string `json:"paymentStatus"`; CustomerId int64 `json:"customerId"`; CustomerName string `json:"customerName"`; CustomerPhone string `json:"customerPhone"`; Remark string `json:"remark"`; Travelers []Traveler `json:"travelers,optional"`; Items []OrderItem `json:"items,optional"`; ProductName string `json:"productName"`; PackageName string `json:"packageName"`; ServiceDate string `json:"serviceDate"`; TimeSlot string `json:"timeSlot"`; RejectReason string `json:"rejectReason,optional"`; VerifiedAt int64 `json:"verifiedAt,optional"` }
 type OrderListResp { Items []CreateOrderResp `json:"items"`; Total int64 `json:"total"` }
+
+type OrderListReq { Status string `form:"status,optional"`; Page int `form:"page,optional" validate:"gte=1"`; PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"` }
 
 type CreatePaymentReq { OrderNo string `json:"orderNo" validate:"required"`; Provider string `json:"provider" validate:"required"`; IdempotencyKey string `json:"idempotencyKey" validate:"required"` }
 type PaymentResp { Id int64 `json:"id"`; PaymentNo string `json:"paymentNo"`; OrderNo string `json:"orderNo"`; Provider string `json:"provider"`; ProviderPaymentId string `json:"providerPaymentId"`; Amount int64 `json:"amount"`; Currency string `json:"currency"`; Status string `json:"status"`; CheckoutURL string `json:"checkoutUrl,optional"` }
@@ -51,6 +53,15 @@ type OkResp { Ok bool `json:"ok"`; Msg string `json:"msg"` }
 
 type VerifyOrderReq { Action string `json:"action" validate:"required,oneof=CONFIRM REJECT"`; Reason string `json:"reason,optional"` }
 type VerifyOrderResp { OrderNo string `json:"orderNo"`; Status string `json:"status"`; RejectReason string `json:"rejectReason,optional"`; VerifiedAt int64 `json:"verifiedAt,optional"` }
+
+type AcceptOrderReq { Action string `json:"action" validate:"required,oneof=ACCEPT REJECT"`; Reason string `json:"reason,optional"` }
+type AcceptOrderResp { OrderNo string `json:"orderNo"`; Status string `json:"status"`; RejectReason string `json:"rejectReason,optional"` }
+
+type RequestRefundReq { Reason string `json:"reason" validate:"required"` }
+type RequestRefundResp { OrderNo string `json:"orderNo"`; Status string `json:"status"`; RejectReason string `json:"rejectReason,optional"` }
+
+type HandleRefundReq { Action string `json:"action" validate:"required,oneof=APPROVE REJECT"`; Reason string `json:"reason,optional"` }
+type HandleRefundResp { OrderNo string `json:"orderNo"`; Status string `json:"status"`; RejectReason string `json:"rejectReason,optional"` }
 
 type CreateReviewReq { OrderNo string `json:"orderNo" validate:"required"`; ProductId int64 `json:"productId" validate:"gt=0"`; Rating int `json:"rating" validate:"gte=1,lte=5"`; ServiceRating int `json:"serviceRating,optional"`; ValueRating int `json:"valueRating,optional"`; Content string `json:"content,optional"`; Images string `json:"images,optional"` }
 type Review { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; ProductId int64 `json:"productId"`; UserId int64 `json:"userId"`; Rating int32 `json:"rating"`; ServiceRating int32 `json:"serviceRating"`; ValueRating int32 `json:"valueRating"`; Content string `json:"content"`; Images string `json:"images"`; ReplyContent string `json:"replyContent,optional"`; ReplyTime int64 `json:"replyTime,optional"`; Status string `json:"status"`; UserName string `json:"userName,optional"`; ProductName string `json:"productName,optional"` }
@@ -120,10 +131,10 @@ service travel-api {
 	get /api/travel/orders/:orderNo returns (CreateOrderResp)
 
 	@handler ListMerchantOrders
-	get /api/travel/merchant/orders (ProductListReq) returns (OrderListResp)
+	get /api/travel/merchant/orders (OrderListReq) returns (OrderListResp)
 
 	@handler ListMyOrders
-	get /api/travel/my/orders (ProductListReq) returns (OrderListResp)
+	get /api/travel/my/orders (OrderListReq) returns (OrderListResp)
 
 	@handler CreatePayment
 	post /api/travel/payments (CreatePaymentReq) returns (PaymentResp)
@@ -160,6 +171,15 @@ service travel-api {
 
 	@handler VerifyOrder
 	post /api/travel/merchant/orders/:orderNo/verify (VerifyOrderReq) returns (VerifyOrderResp)
+
+	@handler AcceptOrder
+	post /api/travel/merchant/orders/:orderNo/accept (AcceptOrderReq) returns (AcceptOrderResp)
+
+	@handler HandleRefund
+	post /api/travel/merchant/orders/:orderNo/refund/handle (HandleRefundReq) returns (HandleRefundResp)
+
+	@handler RequestRefund
+	post /api/travel/my/orders/:orderNo/refund (RequestRefundReq) returns (RequestRefundResp)
 
 	@handler CreateReview
 	post /api/travel/reviews (CreateReviewReq) returns (Review)

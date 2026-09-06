@@ -20,7 +20,7 @@ func NewListMerchantOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext)
 	return &ListMerchantOrdersLogic{Logger: logx.WithContext(ctx), ctx: ctx, svcCtx: svcCtx}
 }
 
-func (l *ListMerchantOrdersLogic) ListMerchantOrders(req *types.ProductListReq) (*types.OrderListResp, error) {
+func (l *ListMerchantOrdersLogic) ListMerchantOrders(req *types.OrderListReq) (*types.OrderListResp, error) {
 	ctx, err := rpcContext(l.ctx)
 	if err != nil {
 		return nil, err

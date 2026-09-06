@@ -186,6 +186,21 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/api/travel/merchant/orders/:orderNo/accept",
+				Handler: AcceptOrderHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/merchant/orders/:orderNo/refund/handle",
+				Handler: HandleRefundHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/my/orders/:orderNo/refund",
+				Handler: RequestRefundHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/api/travel/reviews",
 				Handler: CreateReviewHandler(serverCtx),
 			},

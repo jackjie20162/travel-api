@@ -22,7 +22,7 @@ func NewListMyOrdersLogic(ctx context.Context, svcCtx *svc.ServiceContext) *List
 	return &ListMyOrdersLogic{Logger: logx.WithContext(ctx), ctx: ctx, svcCtx: svcCtx}
 }
 
-func (l *ListMyOrdersLogic) ListMyOrders(req *types.ProductListReq) (*types.OrderListResp, error) {
+func (l *ListMyOrdersLogic) ListMyOrders(req *types.OrderListReq) (*types.OrderListResp, error) {
 	userID, ok := middleware.AuthUserID(l.ctx)
 	if !ok {
 		return nil, errors.New("unauthorized")

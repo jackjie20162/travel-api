@@ -56,7 +56,7 @@ func (l *PayPalReturnLogic) PayPalReturn(r *http.Request) (*types.PaymentResp, e
 	// Mark payment as paid
 	paid, err := l.svcCtx.PaymentClient.MarkPaid(ctx, &travel.MarkPaymentPaidRequest{
 		PaymentNo:         paymentNo,
-		ProviderPaymentId: capture.CaptureID,
+		ProviderPaymentId: capture.OrderID,
 	})
 	if err != nil {
 		// If MarkPaid fails, check if it was already marked paid by webhook
