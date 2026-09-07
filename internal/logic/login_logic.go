@@ -27,23 +27,14 @@ func (l *LoginLogic) Login(req *types.LoginReq) (*types.AuthTokenResp, error) {
 		return nil, errors.New("图形验证码错误或已过期")
 	}
 
-	// 2. 通过用户名获取用户邮箱
-	user, err := l.svcCtx.UserClient.GetUserByUsername(l.ctx, &travel.UsernameRequest{Username: req.Username})
-	if err != nil {
-		return nil, errors.New("用户不存在")
-	}
-	if user.Email == "" {
-		return nil, errors.New("该用户未绑定邮箱，无法使用邮件验证码登录")
-	}
-
-	// 3. 校验邮件验证码
-	if !utils.VerifyEmailCode(l.svcCtx.Redis, user.Email, req.EmailCode) {
+	// 2. 校验邮件验证码
+	if !utils.VerifyEmailCode(l.svcCtx.Redis, req.Email, req.EmailCode) {
 		return nil, errors.New("邮件验证码错误或已过期")
 	}
 
-	// 4. 调用 RPC 登录
+	// 3. 调用 RPC 邮箱登录（无密码）
 	resp, err := l.svcCtx.UserClient.Login(l.ctx, &travel.LoginRequest{
-		Username: req.Username, Password: req.Password,
+		Email: req.Email,
 	})
 	if err != nil {
 		return nil, err

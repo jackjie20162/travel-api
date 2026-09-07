@@ -385,10 +385,7 @@ type RegisterReq struct {
 
 // swagger:model LoginReq
 type LoginReq struct {
-	// required : true
-	Username string `json:"username" validate:"required"`
-	// required : true
-	Password      string `json:"password" validate:"required"`
+	Email         string `json:"email" validate:"required,email"`
 	CaptchaId     string `json:"captchaId" validate:"required"`
 	CaptchaAnswer string `json:"captchaAnswer" validate:"required"`
 	EmailCode     string `json:"emailCode" validate:"required"`

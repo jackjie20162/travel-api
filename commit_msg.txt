@@ -1,0 +1,5 @@
+refactor: Login改为邮箱+验证码登录（无密码）
+
+- travel.api: LoginReq 去掉 username/password，改为 email
+- types.go: LoginReq 同步修改
+- login_logic.go: 去掉 GetUserByUsername 步骤，直接校验邮件验证码后登录
