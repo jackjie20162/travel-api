@@ -27,7 +27,7 @@ Email:
   Is-SSL: true
 
 Redis:
-  Host: 127.0.0.1:6379
+  Host: 127.0.0.1:6380
 
 Captcha:
   KeyPrefix: "captcha:"
