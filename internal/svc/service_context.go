@@ -7,12 +7,14 @@ import (
 	"gitee.com/meinongyihe/travel-rpc/ent"
 	"gitee.com/meinongyihe/travel-rpc/travel"
 	"github.com/zeromicro/go-zero/core/logx"
+	"github.com/zeromicro/go-zero/core/stores/redis"
 	"github.com/zeromicro/go-zero/zrpc"
 )
 
 type ServiceContext struct {
 	Config           config.Config
 	DB               *ent.Client
+	Redis            *redis.Redis
 	CatalogClient    travel.CatalogServiceClient
 	InventoryClient  travel.InventoryServiceClient
 	OrderClient      travel.OrderServiceClient
@@ -35,6 +37,7 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	return &ServiceContext{
 		Config:           c,
 		DB:               entClient,
+		Redis:            c.Redis.NewRedis(),
 		CatalogClient:    travel.NewCatalogServiceClient(conn.Conn()),
 		InventoryClient:  travel.NewInventoryServiceClient(conn.Conn()),
 		OrderClient:      travel.NewOrderServiceClient(conn.Conn()),

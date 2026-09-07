@@ -166,6 +166,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/api/travel/captcha",
+				Handler: CaptchaHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/user/send-email-code",
+				Handler: SendEmailCodeHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/api/travel/user/profile",
 				Handler: GetProfileHandler(serverCtx),
 			},

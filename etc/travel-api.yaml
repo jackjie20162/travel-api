@@ -26,6 +26,14 @@ Email:
   Port: 465
   Is-SSL: true
 
+Redis:
+  Host: 127.0.0.1:6379
+
+Captcha:
+  KeyPrefix: "captcha:"
+  Expire: 300
+  EmailCode: 300
+
 TravelRpc:
   Target: 127.0.0.1:9205
 Payment:

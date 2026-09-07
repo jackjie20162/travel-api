@@ -374,10 +374,13 @@ type RegisterReq struct {
 	// required : true
 	// min length : 6
 	// max length : 64
-	Password string `json:"password" validate:"required,min=6,max=64"`
-	Email    string `json:"email,optional"`
-	Mobile   string `json:"mobile,optional"`
-	Nickname string `json:"nickname,optional"`
+	Password      string `json:"password" validate:"required,min=6,max=64"`
+	Email         string `json:"email" validate:"required,email"`
+	Mobile        string `json:"mobile,optional"`
+	Nickname      string `json:"nickname,optional"`
+	CaptchaId     string `json:"captchaId" validate:"required"`
+	CaptchaAnswer string `json:"captchaAnswer" validate:"required"`
+	EmailCode     string `json:"emailCode" validate:"required"`
 }
 
 // swagger:model LoginReq
@@ -385,7 +388,10 @@ type LoginReq struct {
 	// required : true
 	Username string `json:"username" validate:"required"`
 	// required : true
-	Password string `json:"password" validate:"required"`
+	Password      string `json:"password" validate:"required"`
+	CaptchaId     string `json:"captchaId" validate:"required"`
+	CaptchaAnswer string `json:"captchaAnswer" validate:"required"`
+	EmailCode     string `json:"emailCode" validate:"required"`
 }
 
 // swagger:model LoginByMobileReq
@@ -447,6 +453,19 @@ type ChangePasswordReq struct {
 type OkResp struct {
 	Ok  bool   `json:"ok"`
 	Msg string `json:"msg"`
+}
+
+// swagger:model CaptchaResp
+type CaptchaResp struct {
+	CaptchaId    string `json:"captchaId"`
+	CaptchaImage string `json:"captchaImage"`
+}
+
+// swagger:model SendEmailCodeReq
+type SendEmailCodeReq struct {
+	Email         string `json:"email" validate:"required,email"`
+	CaptchaId     string `json:"captchaId" validate:"required"`
+	CaptchaAnswer string `json:"captchaAnswer" validate:"required"`
 }
 
 // swagger:model VerifyOrderReq

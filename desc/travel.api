@@ -42,14 +42,17 @@ type OrderListReq { Status string `form:"status,optional"`; Page int `form:"page
 type CreatePaymentReq { OrderNo string `json:"orderNo" validate:"required"`; Provider string `json:"provider" validate:"required"`; IdempotencyKey string `json:"idempotencyKey" validate:"required"` }
 type PaymentResp { Id int64 `json:"id"`; PaymentNo string `json:"paymentNo"`; OrderNo string `json:"orderNo"`; Provider string `json:"provider"`; ProviderPaymentId string `json:"providerPaymentId"`; Amount int64 `json:"amount"`; Currency string `json:"currency"`; Status string `json:"status"`; CheckoutURL string `json:"checkoutUrl,optional"` }
 
-type RegisterReq { Username string `json:"username" validate:"required,min=3,max=32"`; Password string `json:"password" validate:"required,min=6,max=64"`; Email string `json:"email,optional"`; Mobile string `json:"mobile,optional"`; Nickname string `json:"nickname,optional"` }
-type LoginReq { Username string `json:"username" validate:"required"`; Password string `json:"password" validate:"required"` }
+type RegisterReq { Username string `json:"username" validate:"required,min=3,max=32"`; Password string `json:"password" validate:"required,min=6,max=64"`; Email string `json:"email" validate:"required,email"`; Mobile string `json:"mobile,optional"`; Nickname string `json:"nickname,optional"`; CaptchaId string `json:"captchaId" validate:"required"`; CaptchaAnswer string `json:"captchaAnswer" validate:"required"`; EmailCode string `json:"emailCode" validate:"required"` }
+type LoginReq { Username string `json:"username" validate:"required"`; Password string `json:"password" validate:"required"`; CaptchaId string `json:"captchaId" validate:"required"`; CaptchaAnswer string `json:"captchaAnswer" validate:"required"`; EmailCode string `json:"emailCode" validate:"required"` }
 type LoginByMobileReq { Mobile string `json:"mobile" validate:"required"`; Password string `json:"password" validate:"required"` }
 type AuthTokenResp { Token string `json:"token"`; User UserProfile `json:"user"` }
 type UserProfile { Id int64 `json:"id"`; Username string `json:"username"`; Nickname string `json:"nickname"`; Email string `json:"email"`; Mobile string `json:"mobile"`; Avatar string `json:"avatar"`; Level int32 `json:"level"`; Gender int32 `json:"gender"`; Birthday string `json:"birthday"`; Bio string `json:"bio"`; Money float64 `json:"money"`; Score int32 `json:"score"`; Jointime int64 `json:"jointime"`; Logintime int64 `json:"logintime"`; Loginip string `json:"loginip"`; Status string `json:"status"`; Createtime int64 `json:"createtime"` }
 type UpdateProfileReq { Nickname string `json:"nickname,optional"`; Avatar string `json:"avatar,optional"`; Email string `json:"email,optional"`; Mobile string `json:"mobile,optional"`; Bio string `json:"bio,optional"`; Birthday string `json:"birthday,optional"`; Gender int32 `json:"gender,optional"` }
 type ChangePasswordReq { OldPassword string `json:"oldPassword" validate:"required"`; NewPassword string `json:"newPassword" validate:"required,min=6,max=64"` }
 type OkResp { Ok bool `json:"ok"`; Msg string `json:"msg"` }
+
+type CaptchaResp { CaptchaId string `json:"captchaId"`; CaptchaImage string `json:"captchaImage"` }
+type SendEmailCodeReq { Email string `json:"email" validate:"required,email"`; CaptchaId string `json:"captchaId" validate:"required"`; CaptchaAnswer string `json:"captchaAnswer" validate:"required"` }
 
 type VerifyOrderReq { Action string `json:"action" validate:"required,oneof=CONFIRM REJECT"`; Reason string `json:"reason,optional"` }
 type VerifyOrderResp { OrderNo string `json:"orderNo"`; Status string `json:"status"`; RejectReason string `json:"rejectReason,optional"`; VerifiedAt int64 `json:"verifiedAt,optional"` }
@@ -161,6 +164,12 @@ service travel-api {
 
 	@handler LoginByMobile
 	post /api/travel/user/login-mobile (LoginByMobileReq) returns (AuthTokenResp)
+
+	@handler Captcha
+	get /api/travel/captcha returns (CaptchaResp)
+
+	@handler SendEmailCode
+	post /api/travel/user/send-email-code (SendEmailCodeReq) returns (OkResp)
 
 	@handler GetProfile
 	get /api/travel/user/profile returns (UserProfile)
