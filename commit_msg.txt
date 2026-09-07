@@ -1,5 +1,4 @@
-fix: 修复 QQ 邮箱 SMTP 465 端口 EOF 错误，改用隐式 TLS (SMTPS)
+fix: 修复邮件发送 isSSL 配置不生效问题
 
-- 原 SendWithTLS 使用 STARTTLS（显式 TLS），不适用于 QQ 465 端口
-- 改为 tls.Dial 建立 TLS 连接后，用 smtp.NewClient 走完整 SMTP 流程
-- 逐步返回具体错误信息便于排查
+- send() 函数改用隐式 TLS 方式，适配 QQ 邮箱 465 端口
+- 删除未使用的 send2() 函数

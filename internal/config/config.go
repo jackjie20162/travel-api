@@ -38,12 +38,12 @@ type EmailConf struct {
 	Secret   string
 	Nickname string
 	Port     int
-	IsSSL    bool `mapstructure:"is-ssl"`
+	IsSSL    bool `mapstructure:"isSSL"`
 }
 
 // CaptchaConf 验证码配置
 type CaptchaConf struct {
 	KeyPrefix string `mapstructure:"key-prefix"`
-	Expire    int    `mapstructure:"expire"` // 验证码过期时间（秒）
+	Expire    int    `mapstructure:"expire"`     // 验证码过期时间（秒）
 	EmailCode int    `mapstructure:"email-code"` // 邮件验证码过期时间（秒）
 }

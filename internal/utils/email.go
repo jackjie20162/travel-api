@@ -22,7 +22,6 @@ func EmailDefault(conf config.EmailConf, subject, body string) error {
 	to := strings.Split(conf.To, ",")
 	return send(conf, to, subject, body)
 }
-
 func send(conf config.EmailConf, to []string, subject, body string) error {
 	e := email.NewEmail()
 	if conf.Nickname != "" {
