@@ -305,7 +305,8 @@ func minorToMajor(amount int64, currency string) string {
 	case "JPY", "KRW":
 		return strconv.FormatInt(amount, 10)
 	default:
-		return fmt.Sprintf("%d.%02d", amount/100, amount%100)
+		// 后端金额单位为元（int64），直接格式化为两位小数
+		return fmt.Sprintf("%d.00", amount)
 	}
 }
 func addQuery(rawURL, key, value string) string {

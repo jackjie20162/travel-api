@@ -24,7 +24,7 @@ Email:
   Secret: vngtiaiqckdzbfcg
   Nickname: 智印科技
   Port: 465
-  isSSL: true
+  IsSSL: true
 
 Redis:
   Host: 127.0.0.1:6380

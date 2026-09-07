@@ -38,7 +38,7 @@ type EmailConf struct {
 	Secret   string
 	Nickname string
 	Port     int
-	IsSSL    bool `mapstructure:"isSSL"`
+	IsSSL    bool
 }
 
 // CaptchaConf 验证码配置
