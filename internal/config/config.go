@@ -11,6 +11,7 @@ type Config struct {
 	TravelRpc    zrpc.RpcClientConf
 	DatabaseConf config.DatabaseConf
 	AllowInit    bool
+	Email        EmailConf
 	Payment      struct {
 		FrontendReturnURL string
 		PayPal            struct {
@@ -24,4 +25,15 @@ type Config struct {
 			SkipVerify bool
 		}
 	}
+}
+
+// EmailConf 邮件发送配置
+type EmailConf struct {
+	To      string
+	From    string
+	Host    string
+	Secret  string
+	Nickname string
+	Port    int
+	IsSSL   bool `mapstructure:"is-ssl"`
 }

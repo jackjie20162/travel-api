@@ -17,6 +17,15 @@ DatabaseConf:
 
 AllowInit: true
 
+Email:
+  To: 610841147@qq.com
+  From: 610841147@qq.com
+  Host: smtp.qq.com
+  Secret: vngtiaiqckdzbfcg
+  Nickname: 智印科技
+  Port: 465
+  Is-SSL: true
+
 TravelRpc:
   Target: 127.0.0.1:9205
 Payment:
