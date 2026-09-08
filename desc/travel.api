@@ -90,6 +90,9 @@ service travel-api {
 	@handler ListPackages
 	get /api/travel/products/:id/packages returns (PackageListResp)
 
+	@handler ListProductItineraryStops
+	get /api/travel/products/:id/itinerary-stops returns (ItineraryStopListResp)
+
 	@handler ListMerchantProducts
 	get /api/travel/merchant/products (ProductListReq) returns (ProductListResp)
 
