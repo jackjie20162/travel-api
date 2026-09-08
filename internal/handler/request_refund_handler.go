@@ -3,6 +3,7 @@ package handler
 import (
 	"net/http"
 
+	"github.com/zeromicro/go-zero/core/logx"
 	"github.com/zeromicro/go-zero/rest/httpx"
 
 	"gitee.com/meinongyihe/travel-api/internal/logic"
@@ -34,9 +35,13 @@ func RequestRefundHandler(svcCtx *svc.ServiceContext) http.HandlerFunc {
 		token := middleware.ExtractToken(r)
 		if token != "" {
 			u, err := svcCtx.DB.User.Query().Where(user.TokenEQ(token)).Only(r.Context())
-			if err == nil {
+			if err != nil {
+				logx.Errorf("[RequestRefund] token lookup failed: %v, token_prefix=%s", err, token[:min(8, len(token))])
+			} else {
 				ctx = middleware.WithAuthUserID(ctx, int64(u.ID))
 			}
+		} else {
+			logx.Errorf("[RequestRefund] no token found in request")
 		}
 		var req types.RequestRefundReq
 		if err := httpx.Parse(r, &req, true); err != nil {

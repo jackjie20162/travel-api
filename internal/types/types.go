@@ -571,3 +571,27 @@ type ReplyReviewReq struct {
 	// required : true
 	ReplyContent string `json:"replyContent" validate:"required"`
 }
+
+// ── Config Management Types ──
+
+// swagger:model ConfigItem
+type ConfigItem struct {
+	ConfigType  string `json:"configType"`
+	ConfigKey   string `json:"configKey"`
+	ConfigValue string `json:"configValue"`
+	Description string `json:"description,optional"`
+}
+
+// swagger:model ConfigSaveReq
+type ConfigSaveReq struct {
+	// required : true
+	ConfigType string `json:"configType" validate:"required"`
+	// required : true
+	Items []ConfigItem `json:"items" validate:"required"`
+}
+
+// swagger:model ConfigGetResp
+type ConfigGetResp struct {
+	ConfigType string       `json:"configType"`
+	Items      []ConfigItem `json:"items"`
+}

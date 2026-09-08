@@ -73,6 +73,12 @@ type Review { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; ProductId i
 type ReviewListResp { Items []Review `json:"items"`; Total int64 `json:"total"`; AvgRating float64 `json:"avgRating"` }
 type ReplyReviewReq { ReplyContent string `json:"replyContent" validate:"required"` }
 
+// ── Config Management Types ──
+type ConfigItem { ConfigType string `json:"configType"`; ConfigKey string `json:"configKey"`; ConfigValue string `json:"configValue"`; Description string `json:"description,optional"` }
+type ConfigGroup { ConfigType string `json:"configType"`; Items []ConfigItem `json:"items"` }
+type ConfigSaveReq { ConfigType string `json:"configType" validate:"required"`; Items []ConfigItem `json:"items" validate:"required"` }
+type ConfigGetResp { ConfigType string `json:"configType"`; Items []ConfigItem `json:"items"` }
+
 // ─ Service Routes ──
 service travel-api {
 	@handler ListProducts
@@ -206,4 +212,11 @@ service travel-api {
 
 	@handler ReplyReview
 	post /api/travel/merchant/reviews/:id/reply (ReplyReviewReq) returns (Review)
+
+	// ── Config Management ──
+	@handler GetMerchantConfig
+	get /api/travel/merchant/config/:configType returns (ConfigGetResp)
+
+	@handler SaveMerchantConfig
+	post /api/travel/merchant/config (ConfigSaveReq) returns (OkResp)
 }

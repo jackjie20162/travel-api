@@ -234,6 +234,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/api/travel/merchant/reviews/:id/reply",
 				Handler: ReplyReviewHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/merchant/config/:configType",
+				Handler: GetMerchantConfigHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/merchant/config",
+				Handler: SaveMerchantConfigHandler(serverCtx),
+			},
 		},
 	)
 }

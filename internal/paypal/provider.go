@@ -163,6 +163,7 @@ func (p *Provider) CaptureOrder(ctx context.Context, orderID string) (*Capture, 
 			} `json:"payments"`
 		} `json:"purchase_units"`
 	}
+
 	if err := json.Unmarshal(data, &out); err != nil {
 		return nil, err
 	}
