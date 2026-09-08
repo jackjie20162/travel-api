@@ -29,6 +29,7 @@ func (l *GetMerchantConfigLogic) GetMerchantConfig() (*types.ConfigGetResp, erro
 	}
 
 	merchantID, _ := middleware.MerchantID(l.ctx)
+	l.Infof("GetMerchantConfig: configType=%s, merchantID=%d", configType, merchantID)
 
 	configs, err := l.svcCtx.DB.MerchantConfig.Query().
 		Where(
@@ -37,8 +38,11 @@ func (l *GetMerchantConfigLogic) GetMerchantConfig() (*types.ConfigGetResp, erro
 		).
 		All(l.ctx)
 	if err != nil {
+		l.Infof("GetMerchantConfig query error: %v", err)
 		return nil, err
 	}
+
+	l.Infof("GetMerchantConfig: found %d rows", len(configs))
 
 	items := make([]types.ConfigItem, 0, len(configs))
 	for _, c := range configs {

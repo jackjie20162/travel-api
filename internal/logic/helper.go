@@ -240,6 +240,7 @@ func toItineraryStop(s *travel.ItineraryStop) types.ItineraryStop {
 		PickupLatitude: s.PickupLatitude, PickupLongitude: s.PickupLongitude,
 		DropoffLocation: s.DropoffLocation, DropoffAddress: s.DropoffAddress,
 		DropoffLatitude: s.DropoffLatitude, DropoffLongitude: s.DropoffLongitude,
+		TypeParams: s.TypeParams,
 	}
 }
 

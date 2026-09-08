@@ -118,6 +118,7 @@ type ItineraryStopReq struct {
 	DropoffAddress      string  `json:"dropoffAddress,optional"`
 	DropoffLatitude     float64 `json:"dropoffLatitude,optional"`
 	DropoffLongitude    float64 `json:"dropoffLongitude,optional"`
+	TypeParams          string  `json:"typeParams,optional"`
 }
 
 type ItineraryStop struct {
@@ -153,6 +154,7 @@ type ItineraryStop struct {
 	DropoffAddress      string  `json:"dropoffAddress"`
 	DropoffLatitude     float64 `json:"dropoffLatitude"`
 	DropoffLongitude    float64 `json:"dropoffLongitude"`
+	TypeParams          string  `json:"typeParams"`
 }
 
 // swagger:model ItineraryStopListResp
@@ -374,21 +376,29 @@ type RegisterReq struct {
 	// required : true
 	// min length : 6
 	// max length : 64
-	Password      string `json:"password" validate:"required,min=6,max=64"`
-	Email         string `json:"email" validate:"required,email"`
-	Mobile        string `json:"mobile,optional"`
-	Nickname      string `json:"nickname,optional"`
-	CaptchaId     string `json:"captchaId" validate:"required"`
+	Password string `json:"password" validate:"required,min=6,max=64"`
+	// required : true
+	Email    string `json:"email" validate:"required,email"`
+	Mobile   string `json:"mobile,optional"`
+	Nickname string `json:"nickname,optional"`
+	// required : true
+	CaptchaId string `json:"captchaId" validate:"required"`
+	// required : true
 	CaptchaAnswer string `json:"captchaAnswer" validate:"required"`
-	EmailCode     string `json:"emailCode" validate:"required"`
+	// required : true
+	EmailCode string `json:"emailCode" validate:"required"`
 }
 
 // swagger:model LoginReq
 type LoginReq struct {
-	Email         string `json:"email" validate:"required,email"`
-	CaptchaId     string `json:"captchaId" validate:"required"`
+	// required : true
+	Email string `json:"email" validate:"required,email"`
+	// required : true
+	CaptchaId string `json:"captchaId" validate:"required"`
+	// required : true
 	CaptchaAnswer string `json:"captchaAnswer" validate:"required"`
-	EmailCode     string `json:"emailCode" validate:"required"`
+	// required : true
+	EmailCode string `json:"emailCode" validate:"required"`
 }
 
 // swagger:model LoginByMobileReq
@@ -460,8 +470,11 @@ type CaptchaResp struct {
 
 // swagger:model SendEmailCodeReq
 type SendEmailCodeReq struct {
-	Email         string `json:"email" validate:"required,email"`
-	CaptchaId     string `json:"captchaId" validate:"required"`
+	// required : true
+	Email string `json:"email" validate:"required,email"`
+	// required : true
+	CaptchaId string `json:"captchaId" validate:"required"`
+	// required : true
 	CaptchaAnswer string `json:"captchaAnswer" validate:"required"`
 }
 
@@ -573,13 +586,16 @@ type ReplyReviewReq struct {
 }
 
 // ── Config Management Types ──
-
-// swagger:model ConfigItem
 type ConfigItem struct {
 	ConfigType  string `json:"configType"`
 	ConfigKey   string `json:"configKey"`
 	ConfigValue string `json:"configValue"`
 	Description string `json:"description,optional"`
+}
+
+type ConfigGroup struct {
+	ConfigType string       `json:"configType"`
+	Items      []ConfigItem `json:"items"`
 }
 
 // swagger:model ConfigSaveReq

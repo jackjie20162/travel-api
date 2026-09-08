@@ -43,6 +43,7 @@ func (l *CreateItineraryStopLogic) CreateItineraryStop(req *types.ItineraryStopR
 		PickupLatitude: req.PickupLatitude, PickupLongitude: req.PickupLongitude,
 		DropoffLocation: req.DropoffLocation, DropoffAddress: req.DropoffAddress,
 		DropoffLatitude: req.DropoffLatitude, DropoffLongitude: req.DropoffLongitude,
+		TypeParams: req.TypeParams,
 	})
 	if err != nil {
 		return nil, err
