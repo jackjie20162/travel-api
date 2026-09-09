@@ -36,6 +36,7 @@ Captcha:
 
 TravelRpc:
   Target: 127.0.0.1:9205
+  Timeout: 10000 # 容忍本地 DB 间歇性停顿（zrpc 客户端默认 2000ms，慢调用尖峰易触发 DeadlineExceeded）
 Payment:
   FrontendReturnURL: ""
   PayPal:
