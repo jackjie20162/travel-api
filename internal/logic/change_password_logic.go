@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"gitee.com/meinongyihe/travel-api/internal/i18n"
 	"gitee.com/meinongyihe/travel-api/internal/middleware"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"gitee.com/meinongyihe/travel-api/internal/types"
@@ -37,5 +38,5 @@ func (l *ChangePasswordLogic) ChangePassword(req *types.ChangePasswordReq) (*typ
 	if err != nil {
 		return nil, err
 	}
-	return &types.OkResp{Ok: true, Msg: "password changed"}, nil
+	return &types.OkResp{Ok: true, Msg: i18n.T(i18n.LocaleFrom(l.ctx), "PASSWORD_CHANGED")}, nil
 }

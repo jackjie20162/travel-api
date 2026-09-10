@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"gitee.com/meinongyihe/travel-api/internal/i18n"
 	"gitee.com/meinongyihe/travel-api/internal/middleware"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"gitee.com/meinongyihe/travel-api/internal/types"
@@ -26,6 +27,7 @@ func publicRpcContext(ctx context.Context) context.Context {
 	if merchant, ok := middleware.MerchantID(ctx); ok {
 		kv = append(kv, "x-merchant-id", strconv.FormatInt(merchant, 10))
 	}
+	kv = append(kv, "locale", i18n.LocaleFrom(ctx))
 	if len(kv) > 0 {
 		return metadata.AppendToOutgoingContext(ctx, kv...)
 	}
@@ -44,6 +46,7 @@ func rpcContext(ctx context.Context) (context.Context, error) {
 	pairs := []string{
 		"x-tenant-id", strconv.FormatInt(tenant, 10),
 		"x-merchant-id", strconv.FormatInt(merchant, 10),
+		"locale", i18n.LocaleFrom(ctx),
 	}
 	// Pass user_id (账号归属人) from authenticated user
 	if userID, ok := middleware.AuthUserID(ctx); ok && userID > 0 {
@@ -64,6 +67,7 @@ func customerRpcContext(ctx context.Context, customerID int64) (context.Context,
 	return metadata.NewOutgoingContext(ctx, metadata.Pairs(
 		"x-tenant-id", strconv.FormatInt(tenant, 10),
 		"x-customer-id", strconv.FormatInt(customerID, 10),
+		"locale", i18n.LocaleFrom(ctx),
 	)), nil
 }
 
@@ -75,6 +79,7 @@ func userRpcContext(ctx context.Context, userID int64) (context.Context, error) 
 	return metadata.NewOutgoingContext(ctx, metadata.Pairs(
 		"x-tenant-id", strconv.FormatInt(tenant, 10),
 		"x-user-id", strconv.FormatInt(userID, 10),
+		"locale", i18n.LocaleFrom(ctx),
 	)), nil
 }
 

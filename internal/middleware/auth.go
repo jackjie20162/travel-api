@@ -5,6 +5,8 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+
+	"gitee.com/meinongyihe/travel-api/internal/i18n"
 )
 
 type contextKey string
@@ -21,6 +23,8 @@ func ContextFromRequest(r *http.Request) context.Context {
 	ctx = context.WithValue(ctx, tenantIDKey, headerInt64(r, "X-Tenant-ID"))
 	ctx = context.WithValue(ctx, merchantIDKey, headerInt64(r, "X-Merchant-ID"))
 	ctx = context.WithValue(ctx, customerIDKey, headerInt64(r, "X-Customer-ID"))
+	// Locale (Accept-Language / X-Locale) drives backend error/message localization.
+	ctx = i18n.WithLocale(ctx, i18n.LocaleFromRequest(r))
 	return ctx
 }
 
