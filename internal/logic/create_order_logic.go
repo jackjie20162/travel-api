@@ -34,17 +34,18 @@ func (l *CreateOrderLogic) CreateOrder(req *types.CreateOrderReq) (*types.Create
 	}
 
 	resp, err := l.svcCtx.OrderClient.Create(ctx, &travel.CreateOrderRequest{
-		ProductId:      req.ProductId,
-		PackageId:      req.PackageId,
-		Date:           req.Date,
-		TimeSlot:       req.TimeSlot,
-		Quantity:       int32(req.Quantity),
-		CustomerEmail:  req.CustomerEmail,
-		CustomerName:   req.CustomerName,
-		CustomerPhone:  req.CustomerPhone,
-		ReservationKey: req.ReservationKey,
-		Travelers:      travelers,
-		Remark:         req.Remark,
+		ProductId:       req.ProductId,
+		PackageId:       req.PackageId,
+		Date:            req.Date,
+		TimeSlot:        req.TimeSlot,
+		Quantity:        int32(req.Quantity),
+		CustomerEmail:   req.CustomerEmail,
+		CustomerName:    req.CustomerName,
+		CustomerPhone:   req.CustomerPhone,
+		ReservationKey:  req.ReservationKey,
+		Travelers:       travelers,
+		Remark:          req.Remark,
+		DisplayCurrency: req.DisplayCurrency,
 	})
 	if err != nil {
 		return nil, err

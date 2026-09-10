@@ -170,6 +170,10 @@ func toOrderResp(o *travel.Order) *types.CreateOrderResp {
 		ProductName: o.GetProductName(), PackageName: o.GetPackageName(),
 		ServiceDate: o.GetServiceDate(), TimeSlot: o.GetTimeSlot(),
 		RejectReason: o.GetRejectReason(), VerifiedAt: o.GetVerifiedAt(),
+		// Locked display currency at order time: rate_micro (×1e6) and amount_minor (cents) → main-unit float
+		DisplayCurrency: o.GetDisplayCurrency(),
+		ExchangeRate:    float64(o.GetExchangeRateMicro()) / 1e6,
+		DisplayAmount:   float64(o.GetDisplayAmountMinor()) / 100,
 	}
 	for _, t := range o.GetTravelers() {
 		resp.Travelers = append(resp.Travelers, types.Traveler{
@@ -236,7 +240,7 @@ func toItineraryStop(s *travel.ItineraryStop) types.ItineraryStop {
 		PoiId: s.PoiId, PoiName: s.PoiName, IsEntering: s.IsEntering,
 		DurationMode: s.DurationMode, DurationHours: int(s.DurationHours),
 		ActivityFeatures: s.ActivityFeatures,
-		PickupLocation: s.PickupLocation, PickupAddress: s.PickupAddress,
+		PickupLocation:   s.PickupLocation, PickupAddress: s.PickupAddress,
 		PickupLatitude: s.PickupLatitude, PickupLongitude: s.PickupLongitude,
 		DropoffLocation: s.DropoffLocation, DropoffAddress: s.DropoffAddress,
 		DropoffLatitude: s.DropoffLatitude, DropoffLongitude: s.DropoffLongitude,

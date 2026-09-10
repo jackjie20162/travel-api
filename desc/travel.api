@@ -32,9 +32,9 @@ type InventoryCheckResp { Available bool `json:"available"`; Remaining int32 `js
 type InventoryBatchReq { StartDate string `form:"startDate" json:"startDate,optional" validate:"required"`; EndDate string `form:"endDate" json:"endDate,optional" validate:"required"` }
 
 type Traveler { Id int64 `json:"id,optional"`; Name string `json:"name"`; IdType string `json:"idType"`; IdNumber string `json:"idNumber"`; Phone string `json:"phone"` }
-type CreateOrderReq { ProductId int64 `json:"productId" validate:"gt=0"`; PackageId int64 `json:"packageId" validate:"gt=0"`; Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Quantity int `json:"quantity" validate:"gt=0"`; CustomerEmail string `json:"customerEmail,optional"`; CustomerName string `json:"customerName,optional"`; CustomerPhone string `json:"customerPhone,optional"`; Travelers []Traveler `json:"travelers,optional"`; Remark string `json:"remark,optional"`; ReservationKey string `json:"reservationKey" validate:"required"` }
+type CreateOrderReq { ProductId int64 `json:"productId" validate:"gt=0"`; PackageId int64 `json:"packageId" validate:"gt=0"`; Date string `json:"date" validate:"required"`; TimeSlot string `json:"timeSlot,optional"`; Quantity int `json:"quantity" validate:"gt=0"`; CustomerEmail string `json:"customerEmail,optional"`; CustomerName string `json:"customerName,optional"`; CustomerPhone string `json:"customerPhone,optional"`; Travelers []Traveler `json:"travelers,optional"`; Remark string `json:"remark,optional"`; DisplayCurrency string `json:"displayCurrency,optional"`; ReservationKey string `json:"reservationKey" validate:"required"` }
 type OrderItem { Id int64 `json:"id"`; ProductId int64 `json:"productId"`; PackageId int64 `json:"packageId"`; TravelerId int64 `json:"travelerId"`; Quantity int32 `json:"quantity"`; UnitPrice int64 `json:"unitPrice"`; TotalAmount int64 `json:"totalAmount"`; ServiceDate string `json:"serviceDate"`; TimeSlot string `json:"timeSlot"`; ProductCode string `json:"productCode"`; ProductName string `json:"productName"`; PackageCode string `json:"packageCode"`; PackageName string `json:"packageName"` }
-type CreateOrderResp { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; Status string `json:"status"`; TotalAmount int64 `json:"totalAmount"`; Currency string `json:"currency"`; CustomerEmail string `json:"customerEmail"`; PaymentStatus string `json:"paymentStatus"`; CustomerId int64 `json:"customerId"`; CustomerName string `json:"customerName"`; CustomerPhone string `json:"customerPhone"`; Remark string `json:"remark"`; Travelers []Traveler `json:"travelers,optional"`; Items []OrderItem `json:"items,optional"`; ProductName string `json:"productName"`; PackageName string `json:"packageName"`; ServiceDate string `json:"serviceDate"`; TimeSlot string `json:"timeSlot"`; RejectReason string `json:"rejectReason,optional"`; VerifiedAt int64 `json:"verifiedAt,optional"` }
+type CreateOrderResp { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; Status string `json:"status"`; TotalAmount int64 `json:"totalAmount"`; Currency string `json:"currency"`; CustomerEmail string `json:"customerEmail"`; PaymentStatus string `json:"paymentStatus"`; CustomerId int64 `json:"customerId"`; CustomerName string `json:"customerName"`; CustomerPhone string `json:"customerPhone"`; Remark string `json:"remark"`; Travelers []Traveler `json:"travelers,optional"`; Items []OrderItem `json:"items,optional"`; ProductName string `json:"productName"`; PackageName string `json:"packageName"`; ServiceDate string `json:"serviceDate"`; TimeSlot string `json:"timeSlot"`; RejectReason string `json:"rejectReason,optional"`; VerifiedAt int64 `json:"verifiedAt,optional"`; DisplayCurrency string `json:"displayCurrency,optional"`; ExchangeRate float64 `json:"exchangeRate,optional"`; DisplayAmount float64 `json:"displayAmount,optional"` }
 type OrderListResp { Items []CreateOrderResp `json:"items"`; Total int64 `json:"total"` }
 
 type OrderListReq { Status string `form:"status,optional"`; Page int `form:"page,optional" validate:"gte=1"`; PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"` }
@@ -72,6 +72,13 @@ type CreateReviewReq { OrderNo string `json:"orderNo" validate:"required"`; Prod
 type Review { Id int64 `json:"id"`; OrderNo string `json:"orderNo"`; ProductId int64 `json:"productId"`; UserId int64 `json:"userId"`; Rating int32 `json:"rating"`; ServiceRating int32 `json:"serviceRating"`; ValueRating int32 `json:"valueRating"`; Content string `json:"content"`; Images string `json:"images"`; ReplyContent string `json:"replyContent,optional"`; ReplyTime int64 `json:"replyTime,optional"`; Status string `json:"status"`; UserName string `json:"userName,optional"`; ProductName string `json:"productName,optional"` }
 type ReviewListResp { Items []Review `json:"items"`; Total int64 `json:"total"`; AvgRating float64 `json:"avgRating"` }
 type ReplyReviewReq { ReplyContent string `json:"replyContent" validate:"required"` }
+
+// ── Currency & Exchange Rate Types ──
+type Currency { Code string `json:"code"`; Symbol string `json:"symbol"`; NameKey string `json:"nameKey,optional"`; Decimals int32 `json:"decimals"`; SymbolPosition string `json:"symbolPosition"`; IsBase bool `json:"isBase"` }
+type CurrencyListResp { Items []Currency `json:"items"` }
+type ExchangeRate { BaseCurrency string `json:"baseCurrency"`; TargetCurrency string `json:"targetCurrency"`; Rate float64 `json:"rate"`; RateMicro int64 `json:"rateMicro"`; EffectiveAt int64 `json:"effectiveAt,optional"` }
+type ExchangeRateListReq { Base string `form:"base,optional" json:"base,optional"` }
+type ExchangeRateListResp { Items []ExchangeRate `json:"items"` }
 
 // ── Config Management Types ──
 type ConfigItem { ConfigType string `json:"configType"`; ConfigKey string `json:"configKey"`; ConfigValue string `json:"configValue"`; Description string `json:"description,optional"` }
@@ -215,6 +222,13 @@ service travel-api {
 
 	@handler ReplyReview
 	post /api/travel/merchant/reviews/:id/reply (ReplyReviewReq) returns (Review)
+
+	// ── Currency & Exchange Rate (public reference data) ──
+	@handler ListCurrencies
+	get /api/travel/currencies returns (CurrencyListResp)
+
+	@handler ListExchangeRates
+	get /api/travel/currencies/rates (ExchangeRateListReq) returns (ExchangeRateListResp)
 
 	// ── Config Management ──
 	@handler GetMerchantConfig

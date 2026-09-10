@@ -279,12 +279,13 @@ type CreateOrderReq struct {
 	Date     string `json:"date" validate:"required"`
 	TimeSlot string `json:"timeSlot,optional"`
 	// min : 0
-	Quantity      int        `json:"quantity" validate:"gt=0"`
-	CustomerEmail string     `json:"customerEmail,optional"`
-	CustomerName  string     `json:"customerName,optional"`
-	CustomerPhone string     `json:"customerPhone,optional"`
-	Travelers     []Traveler `json:"travelers,optional"`
-	Remark        string     `json:"remark,optional"`
+	Quantity        int        `json:"quantity" validate:"gt=0"`
+	CustomerEmail   string     `json:"customerEmail,optional"`
+	CustomerName    string     `json:"customerName,optional"`
+	CustomerPhone   string     `json:"customerPhone,optional"`
+	Travelers       []Traveler `json:"travelers,optional"`
+	Remark          string     `json:"remark,optional"`
+	DisplayCurrency string     `json:"displayCurrency,optional"`
 	// required : true
 	ReservationKey string `json:"reservationKey" validate:"required"`
 }
@@ -307,25 +308,28 @@ type OrderItem struct {
 
 // swagger:model CreateOrderResp
 type CreateOrderResp struct {
-	Id            int64       `json:"id"`
-	OrderNo       string      `json:"orderNo"`
-	Status        string      `json:"status"`
-	TotalAmount   int64       `json:"totalAmount"`
-	Currency      string      `json:"currency"`
-	CustomerEmail string      `json:"customerEmail"`
-	PaymentStatus string      `json:"paymentStatus"`
-	CustomerId    int64       `json:"customerId"`
-	CustomerName  string      `json:"customerName"`
-	CustomerPhone string      `json:"customerPhone"`
-	Remark        string      `json:"remark"`
-	Travelers     []Traveler  `json:"travelers,optional"`
-	Items         []OrderItem `json:"items,optional"`
-	ProductName   string      `json:"productName"`
-	PackageName   string      `json:"packageName"`
-	ServiceDate   string      `json:"serviceDate"`
-	TimeSlot      string      `json:"timeSlot"`
-	RejectReason  string      `json:"rejectReason,optional"`
-	VerifiedAt    int64       `json:"verifiedAt,optional"`
+	Id              int64       `json:"id"`
+	OrderNo         string      `json:"orderNo"`
+	Status          string      `json:"status"`
+	TotalAmount     int64       `json:"totalAmount"`
+	Currency        string      `json:"currency"`
+	CustomerEmail   string      `json:"customerEmail"`
+	PaymentStatus   string      `json:"paymentStatus"`
+	CustomerId      int64       `json:"customerId"`
+	CustomerName    string      `json:"customerName"`
+	CustomerPhone   string      `json:"customerPhone"`
+	Remark          string      `json:"remark"`
+	Travelers       []Traveler  `json:"travelers,optional"`
+	Items           []OrderItem `json:"items,optional"`
+	ProductName     string      `json:"productName"`
+	PackageName     string      `json:"packageName"`
+	ServiceDate     string      `json:"serviceDate"`
+	TimeSlot        string      `json:"timeSlot"`
+	RejectReason    string      `json:"rejectReason,optional"`
+	VerifiedAt      int64       `json:"verifiedAt,optional"`
+	DisplayCurrency string      `json:"displayCurrency,optional"`
+	ExchangeRate    float64     `json:"exchangeRate,optional"`
+	DisplayAmount   float64     `json:"displayAmount,optional"`
 }
 
 // swagger:model OrderListResp
@@ -583,6 +587,39 @@ type ReviewListResp struct {
 type ReplyReviewReq struct {
 	// required : true
 	ReplyContent string `json:"replyContent" validate:"required"`
+}
+
+// ── Currency & Exchange Rate Types ──
+type Currency struct {
+	Code           string `json:"code"`
+	Symbol         string `json:"symbol"`
+	NameKey        string `json:"nameKey,optional"`
+	Decimals       int32  `json:"decimals"`
+	SymbolPosition string `json:"symbolPosition"`
+	IsBase         bool   `json:"isBase"`
+}
+
+// swagger:model CurrencyListResp
+type CurrencyListResp struct {
+	Items []Currency `json:"items"`
+}
+
+type ExchangeRate struct {
+	BaseCurrency   string  `json:"baseCurrency"`
+	TargetCurrency string  `json:"targetCurrency"`
+	Rate           float64 `json:"rate"`
+	RateMicro      int64   `json:"rateMicro"`
+	EffectiveAt    int64   `json:"effectiveAt,optional"`
+}
+
+// swagger:model ExchangeRateListReq
+type ExchangeRateListReq struct {
+	Base string `form:"base,optional" json:"base,optional"`
+}
+
+// swagger:model ExchangeRateListResp
+type ExchangeRateListResp struct {
+	Items []ExchangeRate `json:"items"`
 }
 
 // ── Config Management Types ──

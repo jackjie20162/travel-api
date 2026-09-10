@@ -241,6 +241,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/api/travel/currencies",
+				Handler: ListCurrenciesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/currencies/rates",
+				Handler: ListExchangeRatesHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/api/travel/merchant/config/:configType",
 				Handler: GetMerchantConfigHandler(serverCtx),
 			},
