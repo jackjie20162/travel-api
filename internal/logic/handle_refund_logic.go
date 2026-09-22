@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	paymentregistry "gitee.com/meinongyihe/travel-api/internal/payment"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"gitee.com/meinongyihe/travel-api/internal/types"
 	"gitee.com/meinongyihe/travel-rpc/ent/order"
@@ -46,9 +47,9 @@ func (l *HandleRefundLogic) HandleRefund(req *types.HandleRefundReq) (resp *type
 		return nil, err
 	}
 
-	// If approved, trigger PayPal refund
+	// If approved, trigger provider-specific refund based on payment provider.
 	if req.Action == "APPROVE" && resp2.GetStatus() == "REFUNDED" {
-		l.processPayPalRefund(orderNo)
+		l.processRefund(orderNo)
 	}
 
 	return &types.HandleRefundResp{
@@ -58,31 +59,40 @@ func (l *HandleRefundLogic) HandleRefund(req *types.HandleRefundReq) (resp *type
 	}, nil
 }
 
-func (l *HandleRefundLogic) processPayPalRefund(orderNo string) {
-	// First find the order to get its ent ID
+// processRefund routes the refund to the correct payment provider based on the provider field.
+func (l *HandleRefundLogic) processRefund(orderNo string) {
+	// Find the order to get its ent ID.
 	o, err := l.svcCtx.DB.Order.Query().
 		Where(order.OrderNoEQ(orderNo)).
 		First(l.ctx)
 	if err != nil {
-		logx.Errorf("[PayPal Refund] failed to find order %s: %v", orderNo, err)
+		logx.Errorf("[Refund] failed to find order %s: %v", orderNo, err)
 		return
 	}
-	// Then find the payment by order_id
+	// Find the payment by order_id.
 	p, err := l.svcCtx.DB.Payment.Query().
 		Where(payment.OrderIDEQ(int64(o.ID))).
 		First(l.ctx)
 	if err != nil {
-		logx.Errorf("[PayPal Refund] failed to find payment for order %s: %v", orderNo, err)
+		logx.Errorf("[Refund] failed to find payment for order %s: %v", orderNo, err)
 		return
 	}
-	if p.ProviderPaymentID == "" || p.Provider != "paypal" {
-		logx.Infof("[PayPal Refund] no provider payment id or not paypal, skipping")
+	if p.ProviderPaymentID == "" {
+		logx.Infof("[Refund] no provider payment id for order %s, skipping", orderNo)
 		return
 	}
-	result, err := l.svcCtx.PayPal.RefundCapture(l.ctx, p.ProviderPaymentID, p.Amount, p.Currency)
+
+	// Look up the provider from the registry.
+	provider, ok := paymentregistry.Get(p.Provider)
+	if !ok {
+		logx.Errorf("[Refund] unknown payment provider %q for order %s", p.Provider, orderNo)
+		return
+	}
+
+	result, err := provider.Refund(l.ctx, p.ProviderPaymentID, p.Amount, p.Currency)
 	if err != nil {
-		logx.Errorf("[PayPal Refund] refund failed for capture %s: %v", p.ProviderPaymentID, err)
+		logx.Errorf("[Refund] %s refund failed for payment %s: %v", p.Provider, p.ProviderPaymentID, err)
 		return
 	}
-	logx.Infof("[PayPal Refund] success: refund_id=%s status=%s", result.RefundID, result.Status)
+	logx.Infof("[Refund] %s success: refund_id=%s status=%s", p.Provider, result.RefundID, result.Status)
 }

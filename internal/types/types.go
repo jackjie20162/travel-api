@@ -371,6 +371,13 @@ type PaymentResp struct {
 	CheckoutURL       string `json:"checkoutUrl,optional"`
 }
 
+// swagger:model StripeIntentResp
+type StripeIntentResp struct {
+	PaymentNo      string `json:"paymentNo"`
+	ClientSecret   string `json:"clientSecret"`
+	PublishableKey string `json:"publishableKey"`
+}
+
 // swagger:model RegisterReq
 type RegisterReq struct {
 	// required : true

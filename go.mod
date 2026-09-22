@@ -78,6 +78,7 @@ require (
 	github.com/prometheus/procfs v0.20.1 // indirect
 	github.com/redis/go-redis/v9 v9.22.0 // indirect
 	github.com/spaolacci/murmur3 v1.1.0 // indirect
+	github.com/stripe/stripe-go/v82 v82.5.1 // indirect
 	github.com/titanous/json5 v1.0.0 // indirect
 	github.com/x448/float16 v0.8.4 // indirect
 	github.com/zclconf/go-cty v1.18.0 // indirect

@@ -41,6 +41,7 @@ type OrderListReq { Status string `form:"status,optional"`; Page int `form:"page
 
 type CreatePaymentReq { OrderNo string `json:"orderNo" validate:"required"`; Provider string `json:"provider" validate:"required"`; IdempotencyKey string `json:"idempotencyKey" validate:"required"` }
 type PaymentResp { Id int64 `json:"id"`; PaymentNo string `json:"paymentNo"`; OrderNo string `json:"orderNo"`; Provider string `json:"provider"`; ProviderPaymentId string `json:"providerPaymentId"`; Amount int64 `json:"amount"`; Currency string `json:"currency"`; Status string `json:"status"`; CheckoutURL string `json:"checkoutUrl,optional"` }
+type StripeIntentResp { PaymentNo string `json:"paymentNo"`; ClientSecret string `json:"clientSecret"`; PublishableKey string `json:"publishableKey"` }
 
 type RegisterReq { Username string `json:"username" validate:"required,min=3,max=32"`; Password string `json:"password" validate:"required,min=6,max=64"`; Email string `json:"email" validate:"required,email"`; Mobile string `json:"mobile,optional"`; Nickname string `json:"nickname,optional"`; CaptchaId string `json:"captchaId" validate:"required"`; CaptchaAnswer string `json:"captchaAnswer" validate:"required"`; EmailCode string `json:"emailCode" validate:"required"` }
 type LoginReq { Email string `json:"email" validate:"required,email"`; CaptchaId string `json:"captchaId" validate:"required"`; CaptchaAnswer string `json:"captchaAnswer" validate:"required"`; EmailCode string `json:"emailCode" validate:"required"` }
@@ -171,6 +172,20 @@ service travel-api {
 
 	@handler PayPalWebhook
 	post /api/travel/payments/paypal/webhook
+
+	// ── Stripe Payment ──
+	@handler StripeCreateIntent
+	post /api/travel/payments/stripe/intent (CreatePaymentReq) returns (StripeIntentResp)
+
+	@handler StripeWebhook
+	post /api/travel/payments/stripe/webhook
+
+	// ── Shopify Sales Channel ──
+	@handler SyncProductToShopify
+	post /api/travel/merchant/products/:id/sync-shopify returns (OkResp)
+
+	@handler ShopifyWebhook
+	post /api/travel/shopify/webhook
 
 	@handler Register
 	post /api/travel/user/register (RegisterReq) returns (AuthTokenResp)

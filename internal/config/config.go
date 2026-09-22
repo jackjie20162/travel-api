@@ -27,6 +27,20 @@ type Config struct {
 			CancelURL  string
 			SkipVerify bool
 		}
+		Stripe struct {
+			Enabled        bool
+			SecretKey      string
+			PublishableKey string
+			WebhookSecret  string
+		}
+	}
+	Shopify struct {
+		Enabled       bool
+		StoreDomain   string
+		AccessToken   string
+		APIVersion    string
+		WebhookSecret string
+		SyncEnabled   bool
 	}
 }
 

@@ -4,6 +4,10 @@ import (
 	"entgo.io/ent/dialect"
 	"gitee.com/meinongyihe/travel-api/internal/config"
 	"gitee.com/meinongyihe/travel-api/internal/paypal"
+	paypaladapter "gitee.com/meinongyihe/travel-api/internal/payment/paypal"
+	"gitee.com/meinongyihe/travel-api/internal/payment"
+	shopifyprovider "gitee.com/meinongyihe/travel-api/internal/payment/shopify"
+	stripeprovider "gitee.com/meinongyihe/travel-api/internal/payment/stripe"
 	"gitee.com/meinongyihe/travel-rpc/ent"
 	"gitee.com/meinongyihe/travel-rpc/travel"
 	"github.com/zeromicro/go-zero/core/logx"
@@ -23,7 +27,9 @@ type ServiceContext struct {
 	UserClient       travel.UserServiceClient
 	ReviewClient     travel.ReviewServiceClient
 	CurrencyClient   travel.CurrencyServiceClient
-	PayPal           *paypal.Provider
+	PayPal           *paypal.Provider          // legacy PayPal provider (backward compat)
+	StripeProvider   *stripeprovider.Provider  // Stripe provider
+	ShopifyProvider  *shopifyprovider.Provider // Shopify provider
 }
 
 func NewServiceContext(c config.Config) *ServiceContext {
@@ -35,7 +41,8 @@ func NewServiceContext(c config.Config) *ServiceContext {
 	entClient := ent.NewClient(ent.Log(logx.Info), ent.Driver(drv))
 
 	conn := zrpc.MustNewClient(c.TravelRpc)
-	return &ServiceContext{
+
+	ctx := &ServiceContext{
 		Config:           c,
 		DB:               entClient,
 		Redis:            c.Redis.NewRedis(),
@@ -49,4 +56,48 @@ func NewServiceContext(c config.Config) *ServiceContext {
 		CurrencyClient:   travel.NewCurrencyServiceClient(conn.Conn()),
 		PayPal:           paypal.New(paypal.Config{Enabled: c.Payment.PayPal.Enabled, BaseURL: c.Payment.PayPal.BaseURL, ClientID: c.Payment.PayPal.ClientID, Secret: c.Payment.PayPal.Secret, WebhookID: c.Payment.PayPal.WebhookID, ReturnURL: c.Payment.PayPal.ReturnURL, CancelURL: c.Payment.PayPal.CancelURL, SkipVerify: c.Payment.PayPal.SkipVerify}),
 	}
+
+	// Register payment providers into the unified registry.
+	if c.Payment.PayPal.Enabled {
+		adapter := paypaladapter.New(paypal.Config{
+			Enabled:    c.Payment.PayPal.Enabled,
+			BaseURL:    c.Payment.PayPal.BaseURL,
+			ClientID:   c.Payment.PayPal.ClientID,
+			Secret:     c.Payment.PayPal.Secret,
+			WebhookID:  c.Payment.PayPal.WebhookID,
+			ReturnURL:  c.Payment.PayPal.ReturnURL,
+			CancelURL:  c.Payment.PayPal.CancelURL,
+			SkipVerify: c.Payment.PayPal.SkipVerify,
+		})
+		payment.Register(adapter)
+		logx.Info("[Payment] PayPal provider registered")
+	}
+
+	if c.Payment.Stripe.Enabled {
+		stripeProvider := stripeprovider.New(stripeprovider.Config{
+			Enabled:        c.Payment.Stripe.Enabled,
+			SecretKey:      c.Payment.Stripe.SecretKey,
+			PublishableKey: c.Payment.Stripe.PublishableKey,
+			WebhookSecret:  c.Payment.Stripe.WebhookSecret,
+		})
+		ctx.StripeProvider = stripeProvider
+		payment.Register(stripeProvider)
+		logx.Info("[Payment] Stripe provider registered")
+	}
+
+	if c.Shopify.Enabled {
+		shopifyProvider := shopifyprovider.New(shopifyprovider.Config{
+			Enabled:       c.Shopify.Enabled,
+			StoreDomain:   c.Shopify.StoreDomain,
+			AccessToken:   c.Shopify.AccessToken,
+			APIVersion:    c.Shopify.APIVersion,
+			WebhookSecret: c.Shopify.WebhookSecret,
+			SyncEnabled:   c.Shopify.SyncEnabled,
+		})
+		ctx.ShopifyProvider = shopifyProvider
+		payment.Register(shopifyProvider)
+		logx.Info("[Payment] Shopify provider registered")
+	}
+
+	return ctx
 }

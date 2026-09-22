@@ -156,6 +156,26 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodPost,
+				Path:    "/api/travel/payments/stripe/intent",
+				Handler: StripeCreateIntentHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/payments/stripe/webhook",
+				Handler: StripeWebhookHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/merchant/products/:id/sync-shopify",
+				Handler: SyncProductToShopifyHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/shopify/webhook",
+				Handler: ShopifyWebhookHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
 				Path:    "/api/travel/user/register",
 				Handler: RegisterHandler(serverCtx),
 			},
