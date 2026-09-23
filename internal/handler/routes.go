@@ -279,6 +279,41 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Path:    "/api/travel/merchant/config",
 				Handler: SaveMerchantConfigHandler(serverCtx),
 			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/merchant/attractions",
+				Handler: ListMerchantAttractionsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/merchant/attractions/:id",
+				Handler: GetMerchantAttractionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPost,
+				Path:    "/api/travel/merchant/attractions",
+				Handler: CreateAttractionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodPut,
+				Path:    "/api/travel/merchant/attractions/:id",
+				Handler: UpdateAttractionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodDelete,
+				Path:    "/api/travel/merchant/attractions/:id",
+				Handler: DeleteAttractionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/attractions",
+				Handler: ListAttractionsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/products/:id/attractions",
+				Handler: ListProductAttractionsHandler(serverCtx),
+			},
 		},
 	)
 }

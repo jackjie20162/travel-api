@@ -81,6 +81,12 @@ type ExchangeRate { BaseCurrency string `json:"baseCurrency"`; TargetCurrency st
 type ExchangeRateListReq { Base string `form:"base,optional" json:"base,optional"` }
 type ExchangeRateListResp { Items []ExchangeRate `json:"items"` }
 
+// ── Attraction Types ──
+type Attraction { Id int64 `json:"id"`; TenantId int64 `json:"tenantId"`; MerchantId int64 `json:"merchantId"`; Name string `json:"name"`; NameEn string `json:"nameEn,optional"`; Category string `json:"category,optional"`; Tags string `json:"tags,optional"`; City string `json:"city,optional"`; Address string `json:"address,optional"`; Latitude float64 `json:"latitude,optional"`; Longitude float64 `json:"longitude,optional"`; PoiId string `json:"poiId,optional"`; PoiName string `json:"poiName,optional"`; CoverImage string `json:"coverImage,optional"`; Images string `json:"images,optional"`; Description string `json:"description,optional"`; RichContent string `json:"richContent,optional"`; OpeningHours string `json:"openingHours,optional"`; SuggestedDuration string `json:"suggestedDuration,optional"`; TicketInfo string `json:"ticketInfo,optional"`; Sort int `json:"sort,optional"`; Status string `json:"status,optional"` }
+type AttractionListReq { Keyword string `form:"keyword,optional"`; Category string `form:"category,optional"`; Status string `form:"status,optional"`; Page int `form:"page,optional" validate:"gte=1"`; PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"` }
+type AttractionListResp { Items []Attraction `json:"items"`; Total int64 `json:"total"` }
+type AttractionReq { Name string `json:"name" validate:"required"`; NameEn string `json:"nameEn,optional"`; Category string `json:"category,optional"`; Tags string `json:"tags,optional"`; City string `json:"city,optional"`; Address string `json:"address,optional"`; Latitude float64 `json:"latitude,optional"`; Longitude float64 `json:"longitude,optional"`; PoiId string `json:"poiId,optional"`; PoiName string `json:"poiName,optional"`; CoverImage string `json:"coverImage,optional"`; Images string `json:"images,optional"`; Description string `json:"description,optional"`; RichContent string `json:"richContent,optional"`; OpeningHours string `json:"openingHours,optional"`; SuggestedDuration string `json:"suggestedDuration,optional"`; TicketInfo string `json:"ticketInfo,optional"`; Sort int `json:"sort,optional"`; Status string `json:"status,optional"` }
+
 // ── Config Management Types ──
 type ConfigItem { ConfigType string `json:"configType"`; ConfigKey string `json:"configKey"`; ConfigValue string `json:"configValue"`; Description string `json:"description,optional"` }
 type ConfigGroup { ConfigType string `json:"configType"`; Items []ConfigItem `json:"items"` }
@@ -251,4 +257,27 @@ service travel-api {
 
 	@handler SaveMerchantConfig
 	post /api/travel/merchant/config (ConfigSaveReq) returns (OkResp)
+
+	// ── Attractions (merchant management) ──
+	@handler ListMerchantAttractions
+	get /api/travel/merchant/attractions (AttractionListReq) returns (AttractionListResp)
+
+	@handler GetMerchantAttraction
+	get /api/travel/merchant/attractions/:id returns (Attraction)
+
+	@handler CreateAttraction
+	post /api/travel/merchant/attractions (AttractionReq) returns (Attraction)
+
+	@handler UpdateAttraction
+	put /api/travel/merchant/attractions/:id (AttractionReq) returns (Attraction)
+
+	@handler DeleteAttraction
+	delete /api/travel/merchant/attractions/:id returns (OkResp)
+
+	// ── Attractions (public/client) ──
+	@handler ListAttractions
+	get /api/travel/attractions (AttractionListReq) returns (AttractionListResp)
+
+	@handler ListProductAttractions
+	get /api/travel/products/:id/attractions returns (AttractionListResp)
 }

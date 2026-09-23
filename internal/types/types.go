@@ -629,6 +629,74 @@ type ExchangeRateListResp struct {
 	Items []ExchangeRate `json:"items"`
 }
 
+// ── Attraction Types ──
+type Attraction struct {
+	Id                int64   `json:"id"`
+	TenantId          int64   `json:"tenantId"`
+	MerchantId        int64   `json:"merchantId"`
+	Name              string  `json:"name"`
+	NameEn            string  `json:"nameEn,optional"`
+	Category          string  `json:"category,optional"`
+	Tags              string  `json:"tags,optional"`
+	City              string  `json:"city,optional"`
+	Address           string  `json:"address,optional"`
+	Latitude          float64 `json:"latitude,optional"`
+	Longitude         float64 `json:"longitude,optional"`
+	PoiId             string  `json:"poiId,optional"`
+	PoiName           string  `json:"poiName,optional"`
+	CoverImage        string  `json:"coverImage,optional"`
+	Images            string  `json:"images,optional"`
+	Description       string  `json:"description,optional"`
+	RichContent       string  `json:"richContent,optional"`
+	OpeningHours      string  `json:"openingHours,optional"`
+	SuggestedDuration string  `json:"suggestedDuration,optional"`
+	TicketInfo        string  `json:"ticketInfo,optional"`
+	Sort              int     `json:"sort,optional"`
+	Status            string  `json:"status,optional"`
+}
+
+// swagger:model AttractionListReq
+type AttractionListReq struct {
+	Keyword  string `form:"keyword,optional"`
+	Category string `form:"category,optional"`
+	Status   string `form:"status,optional"`
+	// min : 1
+	Page int `form:"page,optional" validate:"gte=1"`
+	// min : 1
+	// max : 100
+	PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"`
+}
+
+// swagger:model AttractionListResp
+type AttractionListResp struct {
+	Items []Attraction `json:"items"`
+	Total int64        `json:"total"`
+}
+
+// swagger:model AttractionReq
+type AttractionReq struct {
+	// required : true
+	Name              string  `json:"name" validate:"required"`
+	NameEn            string  `json:"nameEn,optional"`
+	Category          string  `json:"category,optional"`
+	Tags              string  `json:"tags,optional"`
+	City              string  `json:"city,optional"`
+	Address           string  `json:"address,optional"`
+	Latitude          float64 `json:"latitude,optional"`
+	Longitude         float64 `json:"longitude,optional"`
+	PoiId             string  `json:"poiId,optional"`
+	PoiName           string  `json:"poiName,optional"`
+	CoverImage        string  `json:"coverImage,optional"`
+	Images            string  `json:"images,optional"`
+	Description       string  `json:"description,optional"`
+	RichContent       string  `json:"richContent,optional"`
+	OpeningHours      string  `json:"openingHours,optional"`
+	SuggestedDuration string  `json:"suggestedDuration,optional"`
+	TicketInfo        string  `json:"ticketInfo,optional"`
+	Sort              int     `json:"sort,optional"`
+	Status            string  `json:"status,optional"`
+}
+
 // ── Config Management Types ──
 type ConfigItem struct {
 	ConfigType  string `json:"configType"`
