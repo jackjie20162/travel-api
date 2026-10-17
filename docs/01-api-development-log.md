@@ -60,3 +60,17 @@ Other systems may integrate with Travel later through its stable REST API, but T
 3. Harden reservation/order consistency inside `travel-rpc` without introducing cross-service dependencies.
 4. Add payment as an internal Travel payment abstraction after the core service is stable.
 5. Publish the REST contract as the integration boundary for Web/App/other adapters.
+
+## 2026-10-17 — Public attraction endpoints & product cover fallback
+
+### Implemented
+
+- `GET /api/travel/attractions/:id` — 公开景点详情（仅 `status=ACTIVE`，按 `X-Merchant-ID` 隔离），直连 ent 查询，不走 RPC。
+- `GET /api/travel/attractions/:id/products` — 反向查询：行程节点 `itinerary_stops.type_params.attractionId` 绑定了该景点的 `PUBLISHED` 线路，LIKE 粗筛 + JSON 精校验，按 `min_price` 升序。
+- 线路主图兜底 `internal/logic/product_cover_fallback.go`：公开产品列表/详情/景点关联线路三处响应中，`cover_image` 为空的产品自动取行程绑定景点的图（按行程顺序取第一个有图景点，景点优先封面、其次图集第一张）。只补齐响应字段，不回写数据库；商户后台接口不兜底。
+
+### Verification status
+
+- `go build ./...` 通过；两个景点接口在临时实例（9216）上走查通过（列表/详情/关联线路/不存在 id 报错）。
+- 主图兜底由 `internal/logic/product_cover_fallback_db_test.go` 验证（只读，需设 `TRAVEL_DB_DSN` 才跑，否则 skip）：4 个 merchant 1 产品清掉主图后，2 个有景点绑定的自动取得景点封面，2 个无绑定的仍为空。
+- 景点图集已补齐到每个 6 张（`travel-rpc/docs/sql/dubai_attractions_images_topup.sql`），图片经本地上传服务 9208 自托管，静态回显 GET 200。

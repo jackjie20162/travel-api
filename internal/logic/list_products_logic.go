@@ -34,5 +34,7 @@ func (l *ListProductsLogic) ListProducts(req *types.ProductListReq) (*types.Prod
 	for _, p := range resp.Items {
 		out.Items = append(out.Items, toProduct(p))
 	}
+	// 线路没有主图时回退取行程绑定景点的图
+	fillMissingProductCovers(l.ctx, l.svcCtx.DB, out.Items)
 	return out, nil
 }

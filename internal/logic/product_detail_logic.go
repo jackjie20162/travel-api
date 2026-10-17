@@ -32,5 +32,8 @@ func (l *ProductDetailLogic) ProductDetail() (*types.Product, error) {
 		return nil, err
 	}
 	out := toProduct(p)
-	return &out, nil
+	// 线路没有主图时回退取行程绑定景点的图
+	items := []types.Product{out}
+	fillMissingProductCovers(l.ctx, l.svcCtx.DB, items)
+	return &items[0], nil
 }

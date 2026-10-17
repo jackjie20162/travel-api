@@ -85,6 +85,8 @@ func (l *ListAttractionProductsLogic) ListAttractionProducts() (resp *types.Prod
 	for _, p := range rows {
 		items = append(items, entToProduct(p))
 	}
+	// 线路没有主图时回退取行程绑定景点的图
+	fillMissingProductCovers(l.ctx, l.svcCtx.DB, items)
 	return &types.ProductListResp{Items: items, Total: int64(len(items))}, nil
 }
 
