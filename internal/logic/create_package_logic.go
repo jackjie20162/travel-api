@@ -29,6 +29,11 @@ func (l *CreatePackageLogic) CreatePackage(req *types.PackageReq) (*types.Packag
 	}
 	p, err := l.svcCtx.ManagementClient.CreatePackage(ctx, &travel.CreatePackageRequest{
 		ProductId: id, Code: req.Code, Name: req.Name,
+		// 报价/库存/币种等扩展字段一并下传，RPC 侧有默认值兼容空值
+		PricingMode: req.PricingMode, InventoryMode: req.InventoryMode,
+		MinOrderQty: int32(req.MinOrderQty), SellCurrency: req.SellCurrency,
+		CostCurrency: req.CostCurrency, GroupPrices: req.GroupPrices,
+		TierPrices: req.TierPrices,
 	})
 	if err != nil {
 		return nil, err
