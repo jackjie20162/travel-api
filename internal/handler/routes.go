@@ -311,6 +311,16 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 			},
 			{
 				Method:  http.MethodGet,
+				Path:    "/api/travel/attractions/:id",
+				Handler: GetAttractionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/attractions/:id/products",
+				Handler: ListAttractionProductsHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
 				Path:    "/api/travel/products/:id/attractions",
 				Handler: ListProductAttractionsHandler(serverCtx),
 			},
