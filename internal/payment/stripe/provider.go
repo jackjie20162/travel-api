@@ -54,7 +54,7 @@ func (p *Provider) CreateCheckout(ctx context.Context, in payment.CheckoutInput)
 	}
 
 	params := &stripe.PaymentIntentParams{
-		Amount:             stripe.Int64(in.Amount),
+		Amount:             stripe.Int64(in.Amount * 100), // Stripe uses cents; backend stores yuan
 		Currency:           stripe.String(strings.ToLower(in.Currency)),
 		PaymentMethodTypes: stripe.StringSlice([]string{"card"}),
 		Description:        stripe.String(fmt.Sprintf("Travel Order %s", in.OrderNo)),
@@ -112,7 +112,7 @@ func (p *Provider) Refund(ctx context.Context, providerPaymentID string, amount 
 		PaymentIntent: stripe.String(providerPaymentID),
 	}
 	if amount > 0 {
-		params.Amount = stripe.Int64(amount)
+		params.Amount = stripe.Int64(amount * 100) // Stripe uses cents; backend stores yuan
 	}
 
 	r, err := refund.New(params)

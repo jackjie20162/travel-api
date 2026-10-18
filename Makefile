@@ -27,7 +27,7 @@ SWAGGER_TYPE=json
 
 GOCTLS ?= C:/Users/zzhjz/go/bin/goctls.exe
 
-
+DOCKER_USERNAME=registry.cn-hangzhou.aliyuncs.com/zifeng6257
 # The arch of the build | 构建的架构
 GOARCH=amd64
 
@@ -63,7 +63,7 @@ docker: # Build the docker image | 构建 docker 镜像
 
 .PHONY: publish-docker
 publish-docker: # Publish docker image | 发布 docker 镜像
-	echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin https://${REPO}
+	#echo "${DOCKER_PASSWORD}" | docker login --username ${DOCKER_USERNAME} --password-stdin https://${REPO}
 	docker push ${DOCKER_USERNAME}/$(SERVICE_DASH)-$(PROJECT_BUILD_SUFFIX):${VERSION}
 	@echo "Publish docker successfully"
 
