@@ -53,6 +53,7 @@ func (l *UpdateAttractionLogic) UpdateAttraction(req *types.AttractionReq) (resp
 		SetCategory(req.Category).
 		SetTags(req.Tags).
 		SetCity(req.City).
+		SetCityID(req.CityId).
 		SetAddress(req.Address).
 		SetLatitude(req.Latitude).
 		SetLongitude(req.Longitude).
@@ -71,6 +72,15 @@ func (l *UpdateAttractionLogic) UpdateAttraction(req *types.AttractionReq) (resp
 	if err != nil {
 		return nil, err
 	}
+	// 覆盖式重写多语言译文。
+	if err := saveAttractionTranslations(l.ctx, l.svcCtx.DB, int64(a.ID), req.Translations); err != nil {
+		return nil, err
+	}
 	out := toAttraction(a)
+	items := []types.Attraction{out}
+	if err := attachAttractionTranslations(l.ctx, l.svcCtx.DB, items); err != nil {
+		return nil, err
+	}
+	out = items[0]
 	return &out, nil
 }

@@ -82,10 +82,18 @@ type ExchangeRateListReq { Base string `form:"base,optional" json:"base,optional
 type ExchangeRateListResp { Items []ExchangeRate `json:"items"` }
 
 // ── Attraction Types ──
-type Attraction { Id int64 `json:"id"`; TenantId int64 `json:"tenantId"`; MerchantId int64 `json:"merchantId"`; Name string `json:"name"`; NameEn string `json:"nameEn,optional"`; Category string `json:"category,optional"`; Tags string `json:"tags,optional"`; City string `json:"city,optional"`; Address string `json:"address,optional"`; Latitude float64 `json:"latitude,optional"`; Longitude float64 `json:"longitude,optional"`; PoiId string `json:"poiId,optional"`; PoiName string `json:"poiName,optional"`; CoverImage string `json:"coverImage,optional"`; Images string `json:"images,optional"`; Description string `json:"description,optional"`; RichContent string `json:"richContent,optional"`; OpeningHours string `json:"openingHours,optional"`; SuggestedDuration string `json:"suggestedDuration,optional"`; TicketInfo string `json:"ticketInfo,optional"`; Sort int `json:"sort,optional"`; Status string `json:"status,optional"` }
-type AttractionListReq { Keyword string `form:"keyword,optional"`; Category string `form:"category,optional"`; Status string `form:"status,optional"`; Page int `form:"page,optional" validate:"gte=1"`; PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"` }
+type Attraction { Id int64 `json:"id"`; TenantId int64 `json:"tenantId"`; MerchantId int64 `json:"merchantId"`; Name string `json:"name"`; NameEn string `json:"nameEn,optional"`; Category string `json:"category,optional"`; Tags string `json:"tags,optional"`; City string `json:"city,optional"`; CityId int64 `json:"cityId,optional"`; Address string `json:"address,optional"`; Latitude float64 `json:"latitude,optional"`; Longitude float64 `json:"longitude,optional"`; PoiId string `json:"poiId,optional"`; PoiName string `json:"poiName,optional"`; CoverImage string `json:"coverImage,optional"`; Images string `json:"images,optional"`; Description string `json:"description,optional"`; RichContent string `json:"richContent,optional"`; OpeningHours string `json:"openingHours,optional"`; SuggestedDuration string `json:"suggestedDuration,optional"`; TicketInfo string `json:"ticketInfo,optional"`; Sort int `json:"sort,optional"`; Status string `json:"status,optional"`; Translations []AttractionTranslationItem `json:"translations,optional"` }
+type AttractionTranslationItem { Locale string `json:"locale"`; Name string `json:"name,optional"`; Category string `json:"category,optional"`; Tags string `json:"tags,optional"`; Address string `json:"address,optional"`; Description string `json:"description,optional"` }
+type AttractionListReq { Keyword string `form:"keyword,optional"`; Category string `form:"category,optional"`; Status string `form:"status,optional"`; Locale string `form:"locale,optional"`; Page int `form:"page,optional" validate:"gte=1"`; PageSize int `form:"pageSize,optional" validate:"gte=1,lte=100"` }
 type AttractionListResp { Items []Attraction `json:"items"`; Total int64 `json:"total"` }
-type AttractionReq { Name string `json:"name" validate:"required"`; NameEn string `json:"nameEn,optional"`; Category string `json:"category,optional"`; Tags string `json:"tags,optional"`; City string `json:"city,optional"`; Address string `json:"address,optional"`; Latitude float64 `json:"latitude,optional"`; Longitude float64 `json:"longitude,optional"`; PoiId string `json:"poiId,optional"`; PoiName string `json:"poiName,optional"`; CoverImage string `json:"coverImage,optional"`; Images string `json:"images,optional"`; Description string `json:"description,optional"`; RichContent string `json:"richContent,optional"`; OpeningHours string `json:"openingHours,optional"`; SuggestedDuration string `json:"suggestedDuration,optional"`; TicketInfo string `json:"ticketInfo,optional"`; Sort int `json:"sort,optional"`; Status string `json:"status,optional"` }
+type AttractionReq { Name string `json:"name" validate:"required"`; NameEn string `json:"nameEn,optional"`; Category string `json:"category,optional"`; Tags string `json:"tags,optional"`; City string `json:"city,optional"`; CityId int64 `json:"cityId,optional"`; Address string `json:"address,optional"`; Latitude float64 `json:"latitude,optional"`; Longitude float64 `json:"longitude,optional"`; PoiId string `json:"poiId,optional"`; PoiName string `json:"poiName,optional"`; CoverImage string `json:"coverImage,optional"`; Images string `json:"images,optional"`; Description string `json:"description,optional"`; RichContent string `json:"richContent,optional"`; OpeningHours string `json:"openingHours,optional"`; SuggestedDuration string `json:"suggestedDuration,optional"`; TicketInfo string `json:"ticketInfo,optional"`; Sort int `json:"sort,optional"`; Status string `json:"status,optional"`; Translations []AttractionTranslationItem `json:"translations,optional"` }
+
+// ── Region (Country -> City) Types ──
+type RegionTranslationItem { Locale string `json:"locale"`; Name string `json:"name"` }
+type Region { Id int64 `json:"id"`; ParentId int64 `json:"parentId"`; Level string `json:"level"`; Code string `json:"code,optional"`; Name string `json:"name"`; PoiId string `json:"poiId,optional"`; PoiName string `json:"poiName,optional"`; Latitude float64 `json:"latitude,optional"`; Longitude float64 `json:"longitude,optional"`; Sort int `json:"sort,optional"`; Status string `json:"status,optional"`; Translations []RegionTranslationItem `json:"translations,optional"` }
+type RegionListReq { Level string `form:"level,optional"`; ParentId int64 `form:"parentId,optional"`; Keyword string `form:"keyword,optional"`; Locale string `form:"locale,optional"`; Status string `form:"status,optional"` }
+type RegionListResp { Items []Region `json:"items"`; Total int64 `json:"total"` }
+type RegionReq { ParentId int64 `json:"parentId,optional"`; Level string `json:"level" validate:"required,oneof=COUNTRY CITY"`; Code string `json:"code,optional"`; Name string `json:"name" validate:"required"`; PoiId string `json:"poiId,optional"`; PoiName string `json:"poiName,optional"`; Latitude float64 `json:"latitude,optional"`; Longitude float64 `json:"longitude,optional"`; Sort int `json:"sort,optional"`; Status string `json:"status,optional"`; Translations []RegionTranslationItem `json:"translations,optional"` }
 
 // ── Config Management Types ──
 type ConfigItem { ConfigType string `json:"configType"`; ConfigKey string `json:"configKey"`; ConfigValue string `json:"configValue"`; Description string `json:"description,optional"` }
@@ -280,4 +288,21 @@ service travel-api {
 
 	@handler ListProductAttractions
 	get /api/travel/products/:id/attractions returns (AttractionListResp)
+
+	// ── Regions: country/city dictionary (public reference) ──
+	@handler ListRegions
+	get /api/travel/regions (RegionListReq) returns (RegionListResp)
+
+	// ── Regions (merchant management) ──
+	@handler ListMerchantRegions
+	get /api/travel/merchant/regions (RegionListReq) returns (RegionListResp)
+
+	@handler CreateRegion
+	post /api/travel/merchant/regions (RegionReq) returns (Region)
+
+	@handler UpdateRegion
+	put /api/travel/merchant/regions/:id (RegionReq) returns (Region)
+
+	@handler DeleteRegion
+	delete /api/travel/merchant/regions/:id returns (OkResp)
 }

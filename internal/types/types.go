@@ -631,28 +631,39 @@ type ExchangeRateListResp struct {
 
 // ── Attraction Types ──
 type Attraction struct {
-	Id                int64   `json:"id"`
-	TenantId          int64   `json:"tenantId"`
-	MerchantId        int64   `json:"merchantId"`
-	Name              string  `json:"name"`
-	NameEn            string  `json:"nameEn,optional"`
-	Category          string  `json:"category,optional"`
-	Tags              string  `json:"tags,optional"`
-	City              string  `json:"city,optional"`
-	Address           string  `json:"address,optional"`
-	Latitude          float64 `json:"latitude,optional"`
-	Longitude         float64 `json:"longitude,optional"`
-	PoiId             string  `json:"poiId,optional"`
-	PoiName           string  `json:"poiName,optional"`
-	CoverImage        string  `json:"coverImage,optional"`
-	Images            string  `json:"images,optional"`
-	Description       string  `json:"description,optional"`
-	RichContent       string  `json:"richContent,optional"`
-	OpeningHours      string  `json:"openingHours,optional"`
-	SuggestedDuration string  `json:"suggestedDuration,optional"`
-	TicketInfo        string  `json:"ticketInfo,optional"`
-	Sort              int     `json:"sort,optional"`
-	Status            string  `json:"status,optional"`
+	Id                int64                       `json:"id"`
+	TenantId          int64                       `json:"tenantId"`
+	MerchantId        int64                       `json:"merchantId"`
+	Name              string                      `json:"name"`
+	NameEn            string                      `json:"nameEn,optional"`
+	Category          string                      `json:"category,optional"`
+	Tags              string                      `json:"tags,optional"`
+	City              string                      `json:"city,optional"`
+	CityId            int64                       `json:"cityId,optional"`
+	Address           string                      `json:"address,optional"`
+	Latitude          float64                     `json:"latitude,optional"`
+	Longitude         float64                     `json:"longitude,optional"`
+	PoiId             string                      `json:"poiId,optional"`
+	PoiName           string                      `json:"poiName,optional"`
+	CoverImage        string                      `json:"coverImage,optional"`
+	Images            string                      `json:"images,optional"`
+	Description       string                      `json:"description,optional"`
+	RichContent       string                      `json:"richContent,optional"`
+	OpeningHours      string                      `json:"openingHours,optional"`
+	SuggestedDuration string                      `json:"suggestedDuration,optional"`
+	TicketInfo        string                      `json:"ticketInfo,optional"`
+	Sort              int                         `json:"sort,optional"`
+	Status            string                      `json:"status,optional"`
+	Translations      []AttractionTranslationItem `json:"translations,optional"`
+}
+
+type AttractionTranslationItem struct {
+	Locale      string `json:"locale"`
+	Name        string `json:"name,optional"`
+	Category    string `json:"category,optional"`
+	Tags        string `json:"tags,optional"`
+	Address     string `json:"address,optional"`
+	Description string `json:"description,optional"`
 }
 
 // swagger:model AttractionListReq
@@ -660,6 +671,7 @@ type AttractionListReq struct {
 	Keyword  string `form:"keyword,optional"`
 	Category string `form:"category,optional"`
 	Status   string `form:"status,optional"`
+	Locale   string `form:"locale,optional"`
 	// min : 1
 	Page int `form:"page,optional" validate:"gte=1"`
 	// min : 1
@@ -676,25 +688,80 @@ type AttractionListResp struct {
 // swagger:model AttractionReq
 type AttractionReq struct {
 	// required : true
-	Name              string  `json:"name" validate:"required"`
-	NameEn            string  `json:"nameEn,optional"`
-	Category          string  `json:"category,optional"`
-	Tags              string  `json:"tags,optional"`
-	City              string  `json:"city,optional"`
-	Address           string  `json:"address,optional"`
-	Latitude          float64 `json:"latitude,optional"`
-	Longitude         float64 `json:"longitude,optional"`
-	PoiId             string  `json:"poiId,optional"`
-	PoiName           string  `json:"poiName,optional"`
-	CoverImage        string  `json:"coverImage,optional"`
-	Images            string  `json:"images,optional"`
-	Description       string  `json:"description,optional"`
-	RichContent       string  `json:"richContent,optional"`
-	OpeningHours      string  `json:"openingHours,optional"`
-	SuggestedDuration string  `json:"suggestedDuration,optional"`
-	TicketInfo        string  `json:"ticketInfo,optional"`
-	Sort              int     `json:"sort,optional"`
-	Status            string  `json:"status,optional"`
+	Name              string                      `json:"name" validate:"required"`
+	NameEn            string                      `json:"nameEn,optional"`
+	Category          string                      `json:"category,optional"`
+	Tags              string                      `json:"tags,optional"`
+	City              string                      `json:"city,optional"`
+	CityId            int64                       `json:"cityId,optional"`
+	Address           string                      `json:"address,optional"`
+	Latitude          float64                     `json:"latitude,optional"`
+	Longitude         float64                     `json:"longitude,optional"`
+	PoiId             string                      `json:"poiId,optional"`
+	PoiName           string                      `json:"poiName,optional"`
+	CoverImage        string                      `json:"coverImage,optional"`
+	Images            string                      `json:"images,optional"`
+	Description       string                      `json:"description,optional"`
+	RichContent       string                      `json:"richContent,optional"`
+	OpeningHours      string                      `json:"openingHours,optional"`
+	SuggestedDuration string                      `json:"suggestedDuration,optional"`
+	TicketInfo        string                      `json:"ticketInfo,optional"`
+	Sort              int                         `json:"sort,optional"`
+	Status            string                      `json:"status,optional"`
+	Translations      []AttractionTranslationItem `json:"translations,optional"`
+}
+
+// ── Region (Country -> City) Types ──
+type RegionTranslationItem struct {
+	Locale string `json:"locale"`
+	Name   string `json:"name"`
+}
+
+type Region struct {
+	Id           int64                   `json:"id"`
+	ParentId     int64                   `json:"parentId"`
+	Level        string                  `json:"level"`
+	Code         string                  `json:"code,optional"`
+	Name         string                  `json:"name"`
+	PoiId        string                  `json:"poiId,optional"`
+	PoiName      string                  `json:"poiName,optional"`
+	Latitude     float64                 `json:"latitude,optional"`
+	Longitude    float64                 `json:"longitude,optional"`
+	Sort         int                     `json:"sort,optional"`
+	Status       string                  `json:"status,optional"`
+	Translations []RegionTranslationItem `json:"translations,optional"`
+}
+
+// swagger:model RegionListReq
+type RegionListReq struct {
+	Level    string `form:"level,optional"`
+	ParentId int64  `form:"parentId,optional"`
+	Keyword  string `form:"keyword,optional"`
+	Locale   string `form:"locale,optional"`
+	Status   string `form:"status,optional"`
+}
+
+// swagger:model RegionListResp
+type RegionListResp struct {
+	Items []Region `json:"items"`
+	Total int64    `json:"total"`
+}
+
+// swagger:model RegionReq
+type RegionReq struct {
+	ParentId int64 `json:"parentId,optional"`
+	// required : true
+	Level string `json:"level" validate:"required,oneof=COUNTRY CITY"`
+	Code  string `json:"code,optional"`
+	// required : true
+	Name         string                  `json:"name" validate:"required"`
+	PoiId        string                  `json:"poiId,optional"`
+	PoiName      string                  `json:"poiName,optional"`
+	Latitude     float64                 `json:"latitude,optional"`
+	Longitude    float64                 `json:"longitude,optional"`
+	Sort         int                     `json:"sort,optional"`
+	Status       string                  `json:"status,optional"`
+	Translations []RegionTranslationItem `json:"translations,optional"`
 }
 
 // ── Config Management Types ──

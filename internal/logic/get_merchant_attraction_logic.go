@@ -39,5 +39,10 @@ func (l *GetMerchantAttractionLogic) GetMerchantAttraction() (resp *types.Attrac
 		return nil, errors.New("attraction not found")
 	}
 	out := toAttraction(a)
+	items := []types.Attraction{out}
+	if err := attachAttractionTranslations(l.ctx, l.svcCtx.DB, items); err != nil {
+		return nil, err
+	}
+	out = items[0]
 	return &out, nil
 }

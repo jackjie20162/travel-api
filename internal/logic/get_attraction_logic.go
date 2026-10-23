@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"gitee.com/meinongyihe/travel-api/internal/i18n"
 	"gitee.com/meinongyihe/travel-api/internal/middleware"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"gitee.com/meinongyihe/travel-api/internal/types"
@@ -44,5 +45,10 @@ func (l *GetAttractionLogic) GetAttraction() (resp *types.Attraction, err error)
 		return nil, err
 	}
 	out := toAttraction(a)
+	items := []types.Attraction{out}
+	if err := resolveAttractionLocale(l.ctx, l.svcCtx.DB, items, i18n.LocaleFrom(l.ctx)); err != nil {
+		return nil, err
+	}
+	out = items[0]
 	return &out, nil
 }

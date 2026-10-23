@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"gitee.com/meinongyihe/travel-api/internal/i18n"
 	"gitee.com/meinongyihe/travel-api/internal/middleware"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"gitee.com/meinongyihe/travel-api/internal/types"
@@ -29,5 +30,17 @@ func (l *ListAttractionsLogic) ListAttractions(req *types.AttractionListReq) (re
 	if req.Status == "" {
 		req.Status = "ACTIVE"
 	}
-	return queryAttractions(l.ctx, l.svcCtx.DB, req, merchantID)
+	resp, err = queryAttractions(l.ctx, l.svcCtx.DB, req, merchantID)
+	if err != nil {
+		return nil, err
+	}
+	// 公开端按请求语言解析展示，命中译文则覆盖，否则回退基础语言。
+	locale := req.Locale
+	if locale == "" {
+		locale = i18n.LocaleFrom(l.ctx)
+	}
+	if err := resolveAttractionLocale(l.ctx, l.svcCtx.DB, resp.Items, locale); err != nil {
+		return nil, err
+	}
+	return resp, nil
 }

@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"strconv"
 
+	"gitee.com/meinongyihe/travel-api/internal/i18n"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"gitee.com/meinongyihe/travel-api/internal/types"
 	"gitee.com/meinongyihe/travel-rpc/ent"
@@ -82,6 +83,10 @@ func (l *ListProductAttractionsLogic) ListProductAttractions() (resp *types.Attr
 		if a, ok := byID[id]; ok {
 			items = append(items, toAttraction(a))
 		}
+	}
+	// 行程景点面向 C 端展示，按请求语言解析。
+	if err := resolveAttractionLocale(l.ctx, l.svcCtx.DB, items, i18n.LocaleFrom(l.ctx)); err != nil {
+		return nil, err
 	}
 	return &types.AttractionListResp{Items: items, Total: int64(len(items))}, nil
 }

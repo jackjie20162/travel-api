@@ -1,0 +1,7 @@
+# 编译产物
+travel_api
+travel_api.exe
+*.exe
+
+# 运行日志
+*.log

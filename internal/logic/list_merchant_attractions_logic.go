@@ -31,7 +31,7 @@ func toAttraction(a *ent.Attraction) types.Attraction {
 	return types.Attraction{
 		Id: int64(a.ID), TenantId: a.TenantID, MerchantId: a.MerchantID,
 		Name: a.Name, NameEn: a.NameEn, Category: a.Category, Tags: a.Tags,
-		City: a.City, Address: a.Address, Latitude: a.Latitude, Longitude: a.Longitude,
+		City: a.City, CityId: a.CityID, Address: a.Address, Latitude: a.Latitude, Longitude: a.Longitude,
 		PoiId: a.PoiID, PoiName: a.PoiName, CoverImage: a.CoverImage, Images: a.Images,
 		Description: a.Description, RichContent: a.RichContent, OpeningHours: a.OpeningHours,
 		SuggestedDuration: a.SuggestedDuration, TicketInfo: a.TicketInfo,
@@ -86,5 +86,13 @@ func queryAttractions(ctx context.Context, db *ent.Client, req *types.Attraction
 
 func (l *ListMerchantAttractionsLogic) ListMerchantAttractions(req *types.AttractionListReq) (resp *types.AttractionListResp, err error) {
 	merchantID, _ := middleware.MerchantID(l.ctx)
-	return queryAttractions(l.ctx, l.svcCtx.DB, req, merchantID)
+	resp, err = queryAttractions(l.ctx, l.svcCtx.DB, req, merchantID)
+	if err != nil {
+		return nil, err
+	}
+	// 管理端需要全部语种译文明细用于编辑。
+	if err := attachAttractionTranslations(l.ctx, l.svcCtx.DB, resp.Items); err != nil {
+		return nil, err
+	}
+	return resp, nil
 }
