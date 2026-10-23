@@ -2,6 +2,7 @@ package logic
 
 import (
 	"context"
+	"encoding/json"
 	"time"
 
 	"gitee.com/meinongyihe/travel-api/internal/types"
@@ -122,6 +123,59 @@ func resolveAttractionLocale(ctx context.Context, db *ent.Client, items []types.
 		}
 		// 对外已按语言解析，译文明细无需返回
 		items[i].Translations = nil
+	}
+	return nil
+}
+
+// resolveItineraryStopAttractionNames 按 locale 用景点译文覆盖行程节点的展示名称。
+// 行程节点通过 type_params.attractionId 关联景点库；命中该 locale 的景点名称译文则
+// 替换 title/poiName/locationName，未命中（无关联或无译文）则保留商户录入的原文。
+// 基础语言(zh-CN)直接返回，保留中文原文。
+func resolveItineraryStopAttractionNames(ctx context.Context, db *ent.Client, items []types.ItineraryStop, locale string) error {
+	if locale == "" || locale == baseLocale || len(items) == 0 {
+		return nil
+	}
+	stopAttraction := make(map[int]int64, len(items))
+	ids := make([]int64, 0, len(items))
+	for i := range items {
+		if items[i].TypeParams == "" {
+			continue
+		}
+		var tp map[string]any
+		if json.Unmarshal([]byte(items[i].TypeParams), &tp) != nil {
+			continue
+		}
+		aid := parseAttractionID(tp["attractionId"])
+		if aid <= 0 {
+			continue
+		}
+		stopAttraction[i] = int64(aid)
+		ids = append(ids, int64(aid))
+	}
+	if len(ids) == 0 {
+		return nil
+	}
+	rows, err := db.AttractionTranslation.Query().
+		Where(
+			attractiontranslation.AttractionIDIn(ids...),
+			attractiontranslation.LocaleEQ(locale),
+		).
+		All(ctx)
+	if err != nil {
+		return err
+	}
+	nameByID := make(map[int64]string, len(rows))
+	for _, t := range rows {
+		if t.Name != "" {
+			nameByID[t.AttractionID] = t.Name
+		}
+	}
+	for i, aid := range stopAttraction {
+		if name, ok := nameByID[aid]; ok && name != "" {
+			items[i].Title = name
+			items[i].PoiName = name
+			items[i].LocationName = name
+		}
 	}
 	return nil
 }

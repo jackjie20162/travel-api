@@ -3,6 +3,7 @@ package logic
 import (
 	"context"
 
+	"gitee.com/meinongyihe/travel-api/internal/i18n"
 	"gitee.com/meinongyihe/travel-api/internal/svc"
 	"gitee.com/meinongyihe/travel-api/internal/types"
 	"gitee.com/meinongyihe/travel-rpc/travel"
@@ -39,6 +40,10 @@ func (l *ListProductItineraryStopsLogic) ListProductItineraryStops() (resp *type
 	out := &types.ItineraryStopListResp{}
 	for _, s := range result.Items {
 		out.Items = append(out.Items, toItineraryStop(s))
+	}
+	// 行程节点面向 C 端展示：关联景点的名称按请求语言解析（中/英/阿）。
+	if err := resolveItineraryStopAttractionNames(l.ctx, l.svcCtx.DB, out.Items, i18n.LocaleFrom(l.ctx)); err != nil {
+		return nil, err
 	}
 	return out, nil
 }
