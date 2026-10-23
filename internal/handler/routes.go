@@ -310,6 +310,17 @@ func RegisterHandlers(server *rest.Server, serverCtx *svc.ServiceContext) {
 				Handler: ListAttractionsHandler(serverCtx),
 			},
 			{
+				// 公开景点详情/关联线路（手写路由：goctls 重生 routes 后需保留）
+				Method:  http.MethodGet,
+				Path:    "/api/travel/attractions/:id",
+				Handler: GetAttractionHandler(serverCtx),
+			},
+			{
+				Method:  http.MethodGet,
+				Path:    "/api/travel/attractions/:id/products",
+				Handler: ListAttractionProductsHandler(serverCtx),
+			},
+			{
 				Method:  http.MethodGet,
 				Path:    "/api/travel/products/:id/attractions",
 				Handler: ListProductAttractionsHandler(serverCtx),

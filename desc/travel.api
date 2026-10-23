@@ -286,6 +286,12 @@ service travel-api {
 	@handler ListAttractions
 	get /api/travel/attractions (AttractionListReq) returns (AttractionListResp)
 
+	@handler GetAttraction
+	get /api/travel/attractions/:id returns (Attraction)
+
+	@handler ListAttractionProducts
+	get /api/travel/attractions/:id/products returns (ProductListResp)
+
 	@handler ListProductAttractions
 	get /api/travel/products/:id/attractions returns (AttractionListResp)
 
