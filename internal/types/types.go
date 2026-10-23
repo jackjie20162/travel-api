@@ -658,12 +658,15 @@ type Attraction struct {
 }
 
 type AttractionTranslationItem struct {
-	Locale      string `json:"locale"`
-	Name        string `json:"name,optional"`
-	Category    string `json:"category,optional"`
-	Tags        string `json:"tags,optional"`
-	Address     string `json:"address,optional"`
-	Description string `json:"description,optional"`
+	Locale            string `json:"locale"`
+	Name              string `json:"name,optional"`
+	Category          string `json:"category,optional"`
+	Tags              string `json:"tags,optional"`
+	Address           string `json:"address,optional"`
+	Description       string `json:"description,optional"`
+	OpeningHours      string `json:"openingHours,optional"`
+	SuggestedDuration string `json:"suggestedDuration,optional"`
+	TicketInfo        string `json:"ticketInfo,optional"`
 }
 
 // swagger:model AttractionListReq
